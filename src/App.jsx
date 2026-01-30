@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Navigation from './components/Navigation';
 import KanbanBoard from './components/KanbanBoard';
 import NotesApp from './components/Notes/NotesApp';
+import ProjectCanvas from './components/ProjectManagement/ProjectCanvas';
 
 function App() {
   const [activeView, setActiveView] = useState('kanban');
@@ -15,6 +16,7 @@ function App() {
       <div className="flex-1 overflow-hidden">
         {activeView === 'kanban' && <KanbanBoard />}
         {activeView === 'notes' && <NotesApp />}
+        {activeView === 'projects' && <ProjectCanvas />}
       </div>
     </div>
   );
