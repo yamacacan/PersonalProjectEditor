@@ -1,0 +1,130 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply box-border;
+  }
+  
+  body {
+    @apply font-sans antialiased;
+  }
+
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-surface-100 rounded;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-surface-300 rounded hover:bg-surface-400;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-primary-500 text-white rounded-lg font-medium
+           hover:bg-primary-600 active:bg-primary-700
+           transition-all duration-200 ease-out
+           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 bg-surface-200 text-slate-700 rounded-lg font-medium
+           hover:bg-surface-300 active:bg-surface-400
+           transition-all duration-200 ease-out
+           focus:outline-none focus:ring-2 focus:ring-surface-400 focus:ring-offset-2;
+  }
+
+  .btn-danger {
+    @apply px-4 py-2 bg-red-500 text-white rounded-lg font-medium
+           hover:bg-red-600 active:bg-red-700
+           transition-all duration-200 ease-out
+           focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2;
+  }
+
+  .btn-success {
+    @apply px-4 py-2 bg-emerald-500 text-white rounded-lg font-medium
+           hover:bg-emerald-600 active:bg-emerald-700
+           transition-all duration-200 ease-out
+           focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2;
+  }
+
+  .input-field {
+    @apply w-full px-3 py-2.5 bg-white border-2 border-surface-200 rounded-lg
+           text-slate-800 placeholder-slate-400
+           focus:outline-none focus:border-primary-500 focus:ring-0
+           transition-colors duration-200;
+  }
+
+  .textarea-field {
+    @apply w-full px-3 py-2.5 bg-white border-2 border-surface-200 rounded-lg
+           text-slate-800 placeholder-slate-400 resize-none
+           focus:outline-none focus:border-primary-500 focus:ring-0
+           transition-colors duration-200;
+  }
+
+  .select-field {
+    @apply w-full px-3 py-2.5 bg-white border-2 border-surface-200 rounded-lg
+           text-slate-800
+           focus:outline-none focus:border-primary-500 focus:ring-0
+           transition-colors duration-200 cursor-pointer;
+  }
+
+  .canvas-grid {
+    background-image: radial-gradient(circle, #283339 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+
+  .glass-panel {
+    background: rgba(16, 28, 34, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(40, 51, 57, 1);
+  }
+}
+
+/* Custom Scrollbar for Note Editor */
+.note-editor-container .ql-editor {
+  @apply overflow-y-auto;
+}
+
+.note-editor-container .ql-container {
+  @apply h-full text-lg text-slate-200 font-normal; 
+  border: none !important;
+}
+
+.note-editor-container .ql-toolbar {
+  @apply bg-slate-900/50 border-slate-700/50 rounded-t-lg !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-top: none !important;
+}
+
+/* Toolbar Icons Color */
+.note-editor-container .ql-toolbar button,
+.note-editor-container .ql-toolbar .ql-picker-label,
+.note-editor-container .ql-toolbar .ql-picker-item,
+.note-editor-container .ql-toolbar svg .ql-stroke {
+  stroke: #94a3b8 !important; /* slate-400 */
+}
+
+.note-editor-container .ql-toolbar button:hover,
+.note-editor-container .ql-toolbar button:hover svg .ql-stroke,
+.note-editor-container .ql-toolbar .ql-picker-label:hover,
+.note-editor-container .ql-toolbar .ql-picker-label:hover svg .ql-stroke,
+.note-editor-container .ql-toolbar .ql-active,
+.note-editor-container .ql-toolbar .ql-active svg .ql-stroke {
+  stroke: #fff !important;
+  color: #fff !important;
+}
+
+.note-editor-container .ql-toolbar .ql-picker-options {
+  @apply bg-slate-800 border-slate-700 text-white !important;
+}
+
+.note-editor-container .ql-editor.ql-blank::before {
+  @apply text-slate-500 not-italic !important;
+}

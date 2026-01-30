@@ -1,0 +1,29 @@
+directories:
+  output: release
+  buildResources: build
+appId: com.kanban.app
+productName: Kanban Board
+copyright: Copyright © 2024 Kanban App
+files:
+  - filter:
+      - dist/**/*
+      - electron/**/*
+      - package.json
+win:
+  target:
+    - target: portable
+      arch:
+        - x64
+  icon: build/icon.ico
+  artifactName: ${productName}-${version}-${arch}.${ext}
+mac:
+  target:
+    - zip
+  category: public.app-category.productivity
+  artifactName: ${productName}-${version}-${arch}.${ext}
+linux:
+  target:
+    - AppImage
+  category: Office
+  artifactName: ${productName}-${version}-${arch}.${ext}
+electronVersion: 28.3.3
