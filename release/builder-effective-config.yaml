@@ -3,7 +3,7 @@ directories:
   buildResources: build
 appId: com.kanban.app
 productName: Kanban Board
-copyright: Copyright © 2024 Kanban App
+copyright: Copyright © 2026 Kanban App
 files:
   - filter:
       - dist/**/*

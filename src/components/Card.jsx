@@ -17,15 +17,15 @@ const getInitials = (name) => {
     .slice(0, 2);
 };
 
-const Card = ({ card, onViewDetail }) => {
+const Card = ({ card, onViewDetail, onDragStart, onDragEnd }) => {
   const [imagePreview, setImagePreview] = useState(null);
-  
+
   const handleClick = () => {
     onViewDetail(card);
   };
 
   const priority = PRIORITY_CONFIG[card.priority] || PRIORITY_CONFIG.medium;
-  
+
   useEffect(() => {
     if (card.image) {
       loadImage(card.image).then(base64 => {
@@ -43,14 +43,18 @@ const Card = ({ card, onViewDetail }) => {
       onDragStart={(e) => {
         e.dataTransfer.setData('cardId', card.id);
         e.dataTransfer.effectAllowed = 'move';
+        if (onDragStart) onDragStart();
+      }}
+      onDragEnd={(e) => {
+        if (onDragEnd) onDragEnd();
       }}
       onClick={handleClick}
     >
       {/* Card Image */}
       {imagePreview && (
         <div className="w-full h-32 overflow-hidden">
-          <img 
-            src={imagePreview} 
+          <img
+            src={imagePreview}
             alt={card.title}
             className="w-full h-full object-cover"
           />
@@ -105,11 +109,10 @@ const Card = ({ card, onViewDetail }) => {
               <div
                 className="h-full bg-gradient-to-r from-primary-500 to-primary-400 transition-all duration-300"
                 style={{
-                  width: `${
-                    card.todos.length > 0
-                      ? (card.todos.filter((t) => t.completed).length / card.todos.length) * 100
-                      : 0
-                  }%`,
+                  width: `${card.todos.length > 0
+                    ? (card.todos.filter((t) => t.completed).length / card.todos.length) * 100
+                    : 0
+                    }%`,
                 }}
               />
             </div>

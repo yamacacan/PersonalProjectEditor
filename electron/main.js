@@ -1,8 +1,9 @@
-import { app, BrowserWindow, ipcMain, nativeImage, Menu } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeImage, Menu, shell } from 'electron';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { readFile, writeFile, mkdir, unlink } from 'fs/promises';
 import { existsSync } from 'fs';
+import { tmpdir } from 'os';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -88,14 +89,14 @@ async function saveData(data) {
 async function saveImage(base64Data, filename) {
   try {
     await ensureDataFile();
-    
+
     // Base64 prefix'i kaldır (data:image/png;base64,)
     const base64String = base64Data.replace(/^data:image\/\w+;base64,/, '');
     const buffer = Buffer.from(base64String, 'base64');
-    
+
     const imagePath = join(imagesDir, filename);
     await writeFile(imagePath, buffer);
-    
+
     return filename; // Sadece dosya adını döndür
   } catch (error) {
     console.error('Error saving image:', error);
@@ -107,23 +108,23 @@ async function saveImage(base64Data, filename) {
 async function loadImage(filename) {
   try {
     if (!filename) return null;
-    
+
     const imagePath = join(imagesDir, filename);
     if (!existsSync(imagePath)) {
       console.warn('Image not found:', filename);
       return null;
     }
-    
+
     const buffer = await readFile(imagePath);
     const base64 = buffer.toString('base64');
-    
+
     // Dosya uzantısından MIME type'ı belirle
     const ext = filename.split('.').pop().toLowerCase();
-    const mimeType = ext === 'png' ? 'image/png' : 
-                     ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : 
-                     ext === 'gif' ? 'image/gif' : 
-                     ext === 'webp' ? 'image/webp' : 'image/png';
-    
+    const mimeType = ext === 'png' ? 'image/png' :
+      ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' :
+        ext === 'gif' ? 'image/gif' :
+          ext === 'webp' ? 'image/webp' : 'image/png';
+
     return `data:${mimeType};base64,${base64}`;
   } catch (error) {
     console.error('Error loading image:', error);
@@ -135,7 +136,7 @@ async function loadImage(filename) {
 async function deleteImage(filename) {
   try {
     if (!filename) return true;
-    
+
     const imagePath = join(imagesDir, filename);
     if (existsSync(imagePath)) {
       await unlink(imagePath);
@@ -149,7 +150,7 @@ async function deleteImage(filename) {
 
 function createWindow() {
   const iconPath = getIconPath();
-  
+
   mainWindow = new BrowserWindow({
     width: 1400,
     height: 900,
@@ -167,7 +168,8 @@ function createWindow() {
     },
     // Modern pencere stilleri
     titleBarStyle: process.platform === 'darwin' ? 'hiddenInset' : 'default',
-    frame: true,
+    frame: false,
+
   });
 
   // Pencere hazır olduğunda göster
@@ -195,7 +197,7 @@ app.whenReady().then(() => {
   if (!isDev) {
     Menu.setApplicationMenu(null);
   }
-  
+
   createWindow();
 
   app.on('activate', () => {
@@ -257,3 +259,54 @@ ipcMain.handle('save-notes-data', async (event, data) => {
     return false;
   }
 });
+
+// Dosyayı sistem varsayılan uygulamasıyla aç
+ipcMain.handle('open-file-with-system-app', async (event, base64Data, filename) => {
+  try {
+    // Geçici dosya yolunu oluştur
+    const tempDir = join(tmpdir(), 'kanban-temp-files');
+    if (!existsSync(tempDir)) {
+      await mkdir(tempDir, { recursive: true });
+    }
+
+    // Base64'ten buffer'a dönüştür
+    const base64String = base64Data.replace(/^data:[^;]+;base64,/, '');
+    const buffer = Buffer.from(base64String, 'base64');
+
+    // Geçici dosyayı kaydet
+    const tempFilePath = join(tempDir, filename);
+    await writeFile(tempFilePath, buffer);
+
+    // Sistem varsayılan uygulamasıyla aç
+    await shell.openPath(tempFilePath);
+
+    return true;
+  } catch (error) {
+    console.error('Error opening file with system app:', error);
+    throw error;
+  }
+});
+
+// Window Control IPC Handlers
+ipcMain.on('minimize-window', () => {
+  if (mainWindow) {
+    mainWindow.minimize();
+  }
+});
+
+ipcMain.on('maximize-window', () => {
+  if (mainWindow) {
+    if (mainWindow.isMaximized()) {
+      mainWindow.unmaximize();
+    } else {
+      mainWindow.maximize();
+    }
+  }
+});
+
+ipcMain.on('close-window', () => {
+  if (mainWindow) {
+    mainWindow.close();
+  }
+});
+

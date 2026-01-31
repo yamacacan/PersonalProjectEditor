@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Column from './Column';
 import CardDetailModal from './CardDetailModal';
 import AddColumnModal from './AddColumnModal';
+import DeleteAlertModal from './DeleteAlertModal';
+import Trashhold from './Trashhold';
 import { loadKanbanData, saveKanbanData, deleteImage } from '../utils/storage';
 
 function KanbanBoard() {
@@ -19,6 +21,15 @@ function KanbanBoard() {
   const [newBoardName, setNewBoardName] = useState('');
   const [isCreatingBoard, setIsCreatingBoard] = useState(false);
   const [createBoardName, setCreateBoardName] = useState('');
+  const [isDraggingCard, setIsDraggingCard] = useState(false);
+
+  // Delete Modal State
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: null
+  });
 
   // Initial Data Load & Migration
   useEffect(() => {
@@ -140,23 +151,31 @@ function KanbanBoard() {
 
   const handleDeleteBoard = async () => {
     if (Object.keys(boards).length <= 1) {
-      alert('En az bir pano kalmalıdır!');
+      setDeleteModal({
+        isOpen: true,
+        title: 'Silinemez',
+        message: 'En az bir pano kalmalıdır!',
+        onConfirm: null
+      });
       return;
     }
 
-    if (!window.confirm(`"${boards[activeBoardId].title}" panosunu silmek istediğinize emin misiniz?`)) {
-      return;
-    }
+    setDeleteModal({
+      isOpen: true,
+      title: 'Panoyu Sil',
+      message: `"${boards[activeBoardId].title}" panosunu silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`,
+      onConfirm: async () => {
+        const newBoards = { ...boards };
+        delete newBoards[activeBoardId];
 
-    const newBoards = { ...boards };
-    delete newBoards[activeBoardId];
+        const remainingIds = Object.keys(newBoards);
+        const nextActiveId = remainingIds[0];
 
-    const remainingIds = Object.keys(newBoards);
-    const nextActiveId = remainingIds[0];
-
-    setBoards(newBoards);
-    setActiveBoardId(nextActiveId);
-    await saveData(newBoards, nextActiveId);
+        setBoards(newBoards);
+        setActiveBoardId(nextActiveId);
+        await saveData(newBoards, nextActiveId);
+      }
+    });
   };
 
   const handleRenameBoardStart = () => {
@@ -265,6 +284,21 @@ function KanbanBoard() {
     }
   };
 
+  // Trash drop handler - silently delete without confirmation
+  const handleTrashDrop = async (cardId) => {
+    await handleCardDelete(cardId);
+    setIsDraggingCard(false);
+  };
+
+  // Drag state handlers
+  const handleCardDragStart = () => {
+    setIsDraggingCard(true);
+  };
+
+  const handleCardDragEnd = () => {
+    setIsDraggingCard(false);
+  };
+
   const handleAddCard = (columnId, newCard) => {
     const currentBoard = getCurrentBoard();
     if (!currentBoard) return;
@@ -299,24 +333,32 @@ function KanbanBoard() {
   };
 
   const handleDeleteColumn = (columnId) => {
-    if (window.confirm('Bu kolonu silmek istediğinize emin misiniz? Tüm kartlar silinecektir.')) {
-      const currentBoard = getCurrentBoard();
-      if (!currentBoard) return;
+    const currentBoard = getCurrentBoard();
+    if (!currentBoard) return;
 
-      const newColumns = { ...currentBoard.columns };
-      delete newColumns[columnId];
+    const columnTitle = currentBoard.columnTitles?.[columnId] || columnId;
+    const cardCount = (currentBoard.columns[columnId] || []).length;
 
-      const newTitles = { ...currentBoard.columnTitles };
-      delete newTitles[columnId];
+    setDeleteModal({
+      isOpen: true,
+      title: 'Kolonu Sil',
+      message: `"${columnTitle}" kolonunu silmek istediğinize emin misiniz?${cardCount > 0 ? ` Bu kolonda ${cardCount} kart var ve hepsi silinecektir.` : ''}`,
+      onConfirm: () => {
+        const newColumns = { ...currentBoard.columns };
+        delete newColumns[columnId];
 
-      const newOrder = currentBoard.columnOrder.filter((id) => id !== columnId);
+        const newTitles = { ...currentBoard.columnTitles };
+        delete newTitles[columnId];
 
-      updateCurrentBoard({
-        columns: newColumns,
-        columnOrder: newOrder,
-        columnTitles: newTitles
-      });
-    }
+        const newOrder = currentBoard.columnOrder.filter((id) => id !== columnId);
+
+        updateCurrentBoard({
+          columns: newColumns,
+          columnOrder: newOrder,
+          columnTitles: newTitles
+        });
+      }
+    });
   };
 
   const handleEditColumn = (columnId, newTitle) => {
@@ -570,7 +612,10 @@ function KanbanBoard() {
               onEditColumn={handleEditColumn}
               onColumnReorder={isReorderMode ? handleColumnReorder : null}
               isReorderMode={isReorderMode}
+              onCardDragStart={handleCardDragStart}
+              onCardDragEnd={handleCardDragEnd}
             />
+
           ))}
         </div>
       </main>
@@ -593,6 +638,20 @@ function KanbanBoard() {
         isOpen={isAddColumnModalOpen}
         onClose={() => setIsAddColumnModalOpen(false)}
         onAdd={handleAddColumn}
+      />
+
+      <DeleteAlertModal
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal({ ...deleteModal, isOpen: false })}
+        onConfirm={deleteModal.onConfirm}
+        title={deleteModal.title}
+        message={deleteModal.message}
+      />
+
+      {/* Trash Drop Zone */}
+      <Trashhold
+        onCardDrop={handleTrashDrop}
+        isVisible={isDraggingCard}
       />
     </div>
   );

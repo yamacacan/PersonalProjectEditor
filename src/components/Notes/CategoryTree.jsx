@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import AddCategoryModal from './AddCategoryModal';
+import DeleteAlertModal from '../DeleteAlertModal';
 
-const CategoryItem = ({ category, level = 0, selectedId, onSelect, onAdd, onDelete }) => {
+const CategoryItem = ({ category, level = 0, selectedId, onSelect, onAdd, onDelete, onDeleteRequest }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [showActions, setShowActions] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -13,10 +14,9 @@ const CategoryItem = ({ category, level = 0, selectedId, onSelect, onAdd, onDele
     onAdd(category.id, newCategory);
   };
 
-  const handleDelete = () => {
-    if (window.confirm(`"${category.name}" kategorisini ve tüm alt kategorilerini silmek istediğinize emin misiniz?`)) {
-      onDelete(category.id);
-    }
+  const handleDelete = (e) => {
+    e.stopPropagation();
+    onDeleteRequest(category);
   };
 
   return (
@@ -73,12 +73,9 @@ const CategoryItem = ({ category, level = 0, selectedId, onSelect, onAdd, onDele
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
             </button>
-            {level > 0 && (
+            {level >= 0 && (
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDelete();
-                }}
+                onClick={handleDelete}
                 className="p-1 hover:bg-red-500/20 text-red-400 rounded transition-colors"
                 title="Kategoriyi sil"
               >
@@ -103,6 +100,7 @@ const CategoryItem = ({ category, level = 0, selectedId, onSelect, onAdd, onDele
               onSelect={onSelect}
               onAdd={onAdd}
               onDelete={onDelete}
+              onDeleteRequest={onDeleteRequest}
             />
           ))}
         </div>
@@ -121,46 +119,78 @@ const CategoryItem = ({ category, level = 0, selectedId, onSelect, onAdd, onDele
 
 const CategoryTree = ({ categories, selectedId, onSelect, onAdd, onDelete }) => {
   const [showAddModal, setShowAddModal] = useState(false);
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    category: null
+  });
 
   const handleAddRootCategory = (newCategory) => {
     onAdd(null, newCategory);
   };
 
+  const handleDeleteRequest = (category) => {
+    setDeleteModal({
+      isOpen: true,
+      category
+    });
+  };
+
+  const handleDeleteConfirm = () => {
+    if (deleteModal.category) {
+      onDelete(deleteModal.category.id);
+    }
+    setDeleteModal({ isOpen: false, category: null });
+  };
+
   return (
-    <div className="flex-1 overflow-y-auto">
-      <div className="py-2">
-        {categories.map((category) => (
-          <CategoryItem
-            key={category.id}
-            category={category}
-            selectedId={selectedId}
-            onSelect={onSelect}
-            onAdd={onAdd}
-            onDelete={onDelete}
-          />
-        ))}
+    <>
+      <div className="flex-1 overflow-y-auto">
+        <div className="py-2">
+          {categories.map((category) => (
+            <CategoryItem
+              key={category.id}
+              category={category}
+              selectedId={selectedId}
+              onSelect={onSelect}
+              onAdd={onAdd}
+              onDelete={onDelete}
+              onDeleteRequest={handleDeleteRequest}
+            />
+          ))}
+        </div>
+
+        {/* Add Root Category Button */}
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="mx-3 mb-3 w-[calc(100%-24px)] flex items-center justify-center gap-2 px-4 py-2 text-slate-400 hover:text-white bg-slate-700/30 hover:bg-slate-700/50 rounded-xl border border-dashed border-slate-600/50 hover:border-slate-500 transition-all duration-200"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+          <span className="text-sm font-medium">Kategori Ekle</span>
+        </button>
+
+        {/* Add Root Category Modal */}
+        <AddCategoryModal
+          isOpen={showAddModal}
+          onClose={() => setShowAddModal(false)}
+          onAdd={handleAddRootCategory}
+        />
       </div>
 
-      {/* Add Root Category Button */}
-      <button
-        onClick={() => setShowAddModal(true)}
-        className="mx-3 mb-3 w-[calc(100%-24px)] flex items-center justify-center gap-2 px-4 py-2 text-slate-400 hover:text-white bg-slate-700/30 hover:bg-slate-700/50 rounded-xl border border-dashed border-slate-600/50 hover:border-slate-500 transition-all duration-200"
-      >
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-        </svg>
-        <span className="text-sm font-medium">Kategori Ekle</span>
-      </button>
-
-      {/* Add Root Category Modal */}
-      <AddCategoryModal
-        isOpen={showAddModal}
-        onClose={() => setShowAddModal(false)}
-        onAdd={handleAddRootCategory}
+      {/* Delete Category Modal */}
+      <DeleteAlertModal
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal({ ...deleteModal, isOpen: false })}
+        onConfirm={handleDeleteConfirm}
+        title="Kategoriyi Sil"
+        message={deleteModal.category
+          ? `"${deleteModal.category.name}" kategorisini ve tüm alt kategorilerini silmek istediğinize emin misiniz?`
+          : ''
+        }
       />
-    </div>
+    </>
   );
 };
 
 export default CategoryTree;
-

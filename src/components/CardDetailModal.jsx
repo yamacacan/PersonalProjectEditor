@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import DatePicker from './DatePicker';
 import ImageViewer from './ImageViewer';
+import DeleteAlertModal from './DeleteAlertModal';
 import { saveImage, loadImage, deleteImage } from '../utils/storage';
+
 
 const PRIORITY_OPTIONS = [
   { value: 'low', label: 'Düşük', color: 'bg-slate-500' },
@@ -39,6 +41,12 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
   const [isImageViewerOpen, setIsImageViewerOpen] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [imageChanged, setImageChanged] = useState(false);
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: null
+  });
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -55,7 +63,7 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
         todos: card.todos || [],
       });
       setImageChanged(false);
-      
+
       // Eğer resim varsa, yükle
       if (card.image) {
         loadImage(card.image).then(base64 => {
@@ -72,19 +80,19 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
   const handleSave = async () => {
     if (formData.title.trim()) {
       const dataToSave = { ...formData };
-      
+
       // Eğer resim değiştiyse, kaydet
       if (imageChanged && imagePreview) {
         // Unique filename oluştur
         const timestamp = Date.now();
         const ext = imagePreview.match(/data:image\/(\w+);/)?.[1] || 'png';
         const filename = `card-${card.id}-${timestamp}.${ext}`;
-        
+
         // Eski resmi sil
         if (card.image) {
           await deleteImage(card.image);
         }
-        
+
         // Yeni resmi kaydet
         const savedFilename = await saveImage(imagePreview, filename);
         dataToSave.image = savedFilename;
@@ -93,7 +101,7 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
         await deleteImage(card.image);
         dataToSave.image = null;
       }
-      
+
       onSave(card.id, dataToSave);
       onClose();
     }
@@ -117,10 +125,16 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
   };
 
   const handleDelete = () => {
-    if (window.confirm('Bu kartı silmek istediğinize emin misiniz?')) {
-      onDelete(card.id);
-      onClose();
-    }
+    setDeleteModal({
+      isOpen: true,
+      title: 'Kart Silme',
+      message: 'Bu kartı silmek istediğinize emin misiniz?',
+      onConfirm: () => {
+        onDelete(card.id);
+        onClose();
+        setDeleteModal({ isOpen: false });
+      }
+    });
   };
 
   const handleOverlayClick = (e) => {
@@ -189,13 +203,13 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
   };
 
   return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
+    <div
+      className="themed-modal-overlay animate-fade-in"
       onClick={handleOverlayClick}
     >
-      <div className="w-full max-w-2xl bg-slate-800 rounded-2xl shadow-2xl border border-slate-700 overflow-hidden animate-slide-up">
+      <div className="w-full max-w-2xl themed-modal rounded-2xl shadow-2xl border overflow-hidden animate-slide-up" style={{ backgroundColor: 'var(--panel-bg)', borderColor: 'var(--panel-border)' }}>
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700">
+        <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: '1px solid var(--panel-border)' }}>
           <h2 className="text-lg font-semibold text-white">Kart Detayları</h2>
           <button
             type="button"
@@ -215,9 +229,9 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
             <label className="block text-sm font-medium text-slate-300 mb-2">Kapak Resmi</label>
             {imagePreview ? (
               <div className="relative group">
-                <img 
-                  src={imagePreview} 
-                  alt="Card cover" 
+                <img
+                  src={imagePreview}
+                  alt="Card cover"
                   className="w-full h-48 object-cover rounded-xl border border-slate-600 cursor-pointer"
                   onClick={() => setIsImageViewerOpen(true)}
                 />
@@ -308,7 +322,7 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
           {/* Tags */}
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">Etiketler</label>
-            
+
             {/* Existing Tags */}
             {formData.tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-3">
@@ -393,11 +407,10 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
                     type="button"
                     key={option.value}
                     onClick={() => setFormData({ ...formData, priority: option.value })}
-                    className={`flex-1 px-2 py-2.5 rounded-xl text-xs font-medium transition-all ${
-                      formData.priority === option.value
-                        ? `${option.color} text-white`
-                        : 'bg-slate-700/50 text-slate-400 hover:bg-slate-700 hover:text-white'
-                    }`}
+                    className={`flex-1 px-2 py-2.5 rounded-xl text-xs font-medium transition-all ${formData.priority === option.value
+                      ? `${option.color} text-white`
+                      : 'bg-slate-700/50 text-slate-400 hover:bg-slate-700 hover:text-white'
+                      }`}
                   >
                     {option.label}
                   </button>
@@ -419,7 +432,7 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
           {/* Todo List */}
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">Yapılacaklar</label>
-            
+
             {/* Existing Todos */}
             {formData.todos.length > 0 && (
               <div className="space-y-2 mb-3">
@@ -431,11 +444,10 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
                     <button
                       type="button"
                       onClick={() => handleToggleTodo(todo.id)}
-                      className={`flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
-                        todo.completed
-                          ? 'bg-primary-500 border-primary-500'
-                          : 'border-slate-500 hover:border-primary-500'
-                      }`}
+                      className={`flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${todo.completed
+                        ? 'bg-primary-500 border-primary-500'
+                        : 'border-slate-500 hover:border-primary-500'
+                        }`}
                     >
                       {todo.completed && (
                         <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -444,11 +456,10 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
                       )}
                     </button>
                     <span
-                      className={`flex-1 text-sm transition-all ${
-                        todo.completed
-                          ? 'text-slate-500 line-through'
-                          : 'text-slate-200'
-                      }`}
+                      className={`flex-1 text-sm transition-all ${todo.completed
+                        ? 'text-slate-500 line-through'
+                        : 'text-slate-200'
+                        }`}
                     >
                       {todo.text}
                     </span>
@@ -506,9 +517,8 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
                   <div
                     className="h-full bg-gradient-to-r from-primary-500 to-primary-400 transition-all duration-300"
                     style={{
-                      width: `${
-                        (formData.todos.filter((t) => t.completed).length / formData.todos.length) * 100
-                      }%`,
+                      width: `${(formData.todos.filter((t) => t.completed).length / formData.todos.length) * 100
+                        }%`,
                     }}
                   />
                 </div>
@@ -518,7 +528,7 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-slate-700 bg-slate-800/50">
+        <div className="flex items-center justify-between px-6 py-4" style={{ borderTop: '1px solid var(--panel-border)', backgroundColor: 'var(--frame-bg)' }}>
           <button
             type="button"
             onClick={handleDelete}
@@ -553,6 +563,15 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
         image={imagePreview}
         isOpen={isImageViewerOpen}
         onClose={() => setIsImageViewerOpen(false)}
+      />
+
+      {/* Delete Modal */}
+      <DeleteAlertModal
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal({ ...deleteModal, isOpen: false })}
+        onConfirm={deleteModal.onConfirm}
+        title={deleteModal.title}
+        message={deleteModal.message}
       />
     </div>
   );

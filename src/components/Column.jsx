@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
 import Card from './Card';
 
-const Column = ({ 
-  title, 
-  columnId, 
-  cards, 
+const Column = ({
+  title,
+  columnId,
+  cards,
   colorClass,
-  onCardMove, 
-  onCardEdit, 
-  onCardDelete, 
-  onAddCard, 
-  onCardViewDetail, 
+  onCardMove,
+  onCardEdit,
+  onCardDelete,
+  onAddCard,
+  onCardViewDetail,
   onDeleteColumn,
   onEditColumn,
   onColumnReorder,
-  isReorderMode
+  isReorderMode,
+  onCardDragStart,
+  onCardDragEnd
 }) => {
   const [isAddingCard, setIsAddingCard] = useState(false);
   const [newCardTitle, setNewCardTitle] = useState('');
@@ -26,7 +28,7 @@ const Column = ({
   const handleDragOver = (e) => {
     e.preventDefault();
     const dragType = e.dataTransfer.types.includes('columnid') ? 'column' : 'card';
-    
+
     if (dragType === 'card' && !isReorderMode) {
       e.dataTransfer.dropEffect = 'move';
       setIsDragOver(true);
@@ -49,10 +51,10 @@ const Column = ({
     e.stopPropagation();
     setIsDragOver(false);
     setIsColumnDragOver(false);
-    
+
     const cardId = e.dataTransfer.getData('cardId');
     const draggedColumnId = e.dataTransfer.getData('columnId');
-    
+
     if (cardId) {
       onCardMove(cardId, columnId);
     } else if (draggedColumnId && onColumnReorder) {
@@ -133,7 +135,7 @@ const Column = ({
         <div className="flex items-center gap-3 flex-1 min-w-0">
           {/* Drag Handle */}
           {isReorderMode && onColumnReorder && (
-            <div 
+            <div
               className="text-slate-500 hover:text-slate-300 cursor-grab active:cursor-grabbing transition-colors animate-fade-in"
               title="Kolonu taşımak için sürükleyin"
             >
@@ -143,7 +145,7 @@ const Column = ({
             </div>
           )}
           <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${colorClass} flex-shrink-0`}></div>
-          
+
           {isEditingTitle ? (
             <input
               type="text"
@@ -158,7 +160,7 @@ const Column = ({
               autoFocus
             />
           ) : (
-            <h2 
+            <h2
               className="font-semibold text-white truncate cursor-pointer hover:text-primary-400 transition-colors"
               onDoubleClick={handleTitleDoubleClick}
               title="Düzenlemek için çift tıklayın"
@@ -166,7 +168,7 @@ const Column = ({
               {title}
             </h2>
           )}
-          
+
           <span className="px-2 py-0.5 text-xs font-medium text-slate-400 bg-slate-700/50 rounded-full flex-shrink-0">
             {cards.length}
           </span>
@@ -218,6 +220,8 @@ const Column = ({
             key={card.id}
             card={card}
             onViewDetail={onCardViewDetail}
+            onDragStart={onCardDragStart}
+            onDragEnd={onCardDragEnd}
           />
         ))}
 

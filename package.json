@@ -1,12 +1,12 @@
 {
   "name": "kanban-app",
   "version": "1.0.0",
-  "description": "Electron + Vite + React Kanban Application",
+  "description": "Personal Project Editor",
   "main": "electron/main.js",
   "type": "module",
   "author": {
-    "name": "Kanban App",
-    "email": "info@kanban.app"
+    "name": "Ahmet Can Yamaç",
+    "email": "yamacahmetcan@gmail.com"
   },
   "license": "MIT",
   "scripts": {
@@ -47,7 +47,7 @@
   "build": {
     "appId": "com.kanban.app",
     "productName": "Kanban Board",
-    "copyright": "Copyright © 2024 Kanban App",
+    "copyright": "Copyright © 2026 Kanban App",
     "directories": {
       "output": "release",
       "buildResources": "build"

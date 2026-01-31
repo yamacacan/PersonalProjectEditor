@@ -154,3 +154,31 @@ export const saveProjectManagementData = async (data) => {
     return false;
   }
 };
+
+// Dosyayı sistem varsayılan uygulamasıyla aç
+export const openFileWithSystemApp = async (base64Data, filename) => {
+  if (window.electronAPI && window.electronAPI.openFileWithSystemApp) {
+    try {
+      await window.electronAPI.openFileWithSystemApp(base64Data, filename);
+      return true;
+    } catch (error) {
+      console.error('Error opening file with system app:', error);
+      return false;
+    }
+  }
+
+  // Fallback for browser - dosyayı indir
+  try {
+    const link = document.createElement('a');
+    link.href = base64Data;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    return true;
+  } catch (error) {
+    console.error('Error downloading file:', error);
+    return false;
+  }
+};
+

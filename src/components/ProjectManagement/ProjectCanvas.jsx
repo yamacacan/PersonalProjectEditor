@@ -558,25 +558,25 @@ const ProjectCanvas = () => {
     };
 
     if (isLoading) {
-        return <div className="h-full w-full flex items-center justify-center bg-[#101c22]"><div className="w-10 h-10 border-4 border-[#13a4ec] border-t-transparent rounded-full animate-spin" /></div>;
+        return <div className="h-full w-full flex items-center justify-center" style={{ backgroundColor: 'var(--canvas-bg)' }}><div className="w-10 h-10 border-4 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'var(--accent-500)', borderTopColor: 'transparent' }} /></div>;
     }
 
     if (!projects.length) {
         return (
-            <div className="h-full w-full flex items-center justify-center bg-[#101c22]">
-                <div className="w-96 p-6 rounded-xl border border-[#283339] bg-[#1a252b]">
+            <div className="h-full w-full flex items-center justify-center" style={{ backgroundColor: 'var(--canvas-bg)' }}>
+                <div className="w-96 p-6 rounded-xl border" style={{ backgroundColor: 'var(--panel-bg)', borderColor: 'var(--panel-border)' }}>
                     <h2 className="text-lg font-bold text-white mb-4">Yeni Proje Oluştur</h2>
-                    <input value={newProjectName} onChange={(e) => setNewProjectName(e.target.value)} placeholder="Proje adı" className="w-full rounded-lg border border-[#283339] bg-[#101c22] px-3 py-2 text-sm text-white mb-3" onKeyDown={(e) => e.key === "Enter" && handleCreateProject()} />
-                    <button onClick={handleCreateProject} className="w-full rounded-lg bg-[#13a4ec] px-4 py-2 text-sm font-bold text-white">Oluştur</button>
+                    <input value={newProjectName} onChange={(e) => setNewProjectName(e.target.value)} placeholder="Proje adı" className="w-full rounded-lg border px-3 py-2 text-sm text-white mb-3" style={{ backgroundColor: 'var(--canvas-bg)', borderColor: 'var(--panel-border)' }} onKeyDown={(e) => e.key === "Enter" && handleCreateProject()} />
+                    <button onClick={handleCreateProject} className="w-full rounded-lg px-4 py-2 text-sm font-bold text-white" style={{ backgroundColor: 'var(--accent-500)' }}>Oluştur</button>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="h-full w-full overflow-hidden bg-[#101c22] text-white flex flex-col">
+        <div className="h-full w-full overflow-hidden text-white flex flex-col" style={{ backgroundColor: 'var(--canvas-bg)' }}>
             {/* Header */}
-            <header className="flex items-center justify-between border-b border-[#283339] px-4 py-2 shrink-0">
+            <header className="flex items-center justify-between px-4 py-2 shrink-0" style={{ borderBottom: '1px solid var(--panel-border)' }}>
                 <div className="flex items-center gap-4">
                     <h2 className="font-bold text-[#13a4ec]">Mimari Kanvas</h2>
                     <button onClick={() => setIsProjectMenuOpen(!isProjectMenuOpen)} className="text-sm text-slate-400 hover:text-white flex items-center gap-1">
@@ -639,7 +639,7 @@ const ProjectCanvas = () => {
                 </div>
 
                 {/* Kanvas */}
-                <div ref={canvasRef} onMouseDown={handleCanvasMouseDown} onMouseMove={handleCanvasMouseMove} onMouseUp={handleCanvasMouseUp} onMouseLeave={handleCanvasMouseUp} onContextMenu={(e) => handleContextMenu(e)} onClick={closeContextMenu} className={`flex-1 relative overflow-hidden ${mode === "pan" || isPanning ? "cursor-grab" : shapeToAdd ? "cursor-crosshair" : "cursor-default"}`} style={{ background: "radial-gradient(circle, #283339 1px, transparent 1px)", backgroundSize: "20px 20px", backgroundPosition: `${pan.x}px ${pan.y}px` }}>
+                <div ref={canvasRef} onMouseDown={handleCanvasMouseDown} onMouseMove={handleCanvasMouseMove} onMouseUp={handleCanvasMouseUp} onMouseLeave={handleCanvasMouseUp} onContextMenu={(e) => handleContextMenu(e)} onClick={closeContextMenu} className={`flex-1 relative overflow-hidden themed-canvas ${mode === "pan" || isPanning ? "cursor-grab" : shapeToAdd ? "cursor-crosshair" : "cursor-default"}`} style={{ backgroundPosition: `${pan.x}px ${pan.y}px` }}>
                     <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom / 100})`, transformOrigin: "0 0" }}>
                         {/* Bağlantılar - öğelerden önce render edilir (arka planda kalır) */}
                         <svg width="10000" height="10000" className="absolute top-0 left-0 pointer-events-none" style={{ overflow: 'visible' }}>
