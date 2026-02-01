@@ -6,7 +6,7 @@
   <img src="build/icon.svg" width="120" alt="Personal Project Editor Logo" />
 </p>
 
-### Modern, Şık ve Güçlü Bir Kişisel Proje Yönetim Aracı
+### A Modern, Elegant and Powerful Personal Project Management Tool
 
 [![Electron](https://img.shields.io/badge/Electron-28.x-47848F?style=for-the-badge&logo=electron&logoColor=white)](https://www.electronjs.org/)
 [![React](https://img.shields.io/badge/React-18.x-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
@@ -14,76 +14,76 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.x-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
 <p align="center">
-  <strong>Electron + Vite + React + Tailwind CSS</strong> ile geliştirilmiştir.
+  <strong>Built with Electron + Vite + React + Tailwind CSS</strong>
 </p>
 
 ---
 
 </div>
 
-## 📸 Ekran Görüntüleri
+## 📸 Screenshots
 
 <div align="center">
   <img src="readmeassets/kanban.png" alt="Kanban Board" width="80%" />
-  <p><em>📋 Kanban Board - Görevlerinizi kolayca yönetin</em></p>
+  <p><em>📋 Kanban Board - Easily manage your tasks</em></p>
   
   <br/>
   
-  <img src="readmeassets/noteeditör.png" alt="Not Editörü" width="80%" />
-  <p><em>📝 Zengin Metin Editörü - Notlarınızı şık bir şekilde yazın</em></p>
+  <img src="readmeassets/noteeditör.png" alt="Note Editor" width="80%" />
+  <p><em>📝 Rich Text Editor - Write your notes in style</em></p>
 </div>
 
 ---
 
-## ✨ Özellikler
+## ✨ Features
 
 <table>
   <tr>
     <td width="50%">
-      <h3>� Kanban Board</h3>
+      <h3>📋 Kanban Board</h3>
       <ul>
-        <li>Sürükle & Bırak ile kart yönetimi</li>
-        <li>Renkli etiketler ve kategoriler</li>
-        <li>Öncelik seviyeleri (Düşük, Orta, Yüksek)</li>
-        <li>Kart detay modalı</li>
-        <li>Yapılacaklar listesi</li>
-        <li>Kart resim ekleme</li>
-        <li>🗑️ Çöp kutusu drop zone</li>
+        <li>Drag & Drop card management</li>
+        <li>Colorful labels and categories</li>
+        <li>Priority levels (Low, Medium, High)</li>
+        <li>Card detail modal</li>
+        <li>To-do lists</li>
+        <li>Card image attachment</li>
+        <li>🗑️ Trash bin drop zone</li>
       </ul>
     </td>
     <td width="50%">
-      <h3>📝 Not Defteri</h3>
+      <h3>📝 Notebook</h3>
       <ul>
-        <li>Zengin metin editörü (Quill)</li>
-        <li>Başlık, kalın, italik formatlar</li>
-        <li>Listeler ve numaralı listeler</li>
-        <li>Kod blokları</li>
-        <li>Otomatik kaydetme</li>
-        <li>Şık karanlık tema</li>
+        <li>Rich text editor (Quill)</li>
+        <li>Heading, bold, italic formatting</li>
+        <li>Bullet and numbered lists</li>
+        <li>Code blocks</li>
+        <li>Auto-save</li>
+        <li>Elegant dark theme</li>
       </ul>
     </td>
   </tr>
   <tr>
     <td width="50%">
-      <h3>🏗️ Mimari Kanvas</h3>
+      <h3>🏗️ Architecture Canvas</h3>
       <ul>
-        <li>Şekil ekleme (Dikdörtgen, Daire, vb.)</li>
-        <li>Bağlantı çizgileri</li>
-        <li>Sürükle & Bırak düzenleme</li>
-        <li>Zoom ve pan kontrolü</li>
-        <li>Kopyala & Yapıştır</li>
-        <li>Sağ tık menüsü</li>
+        <li>Shape insertion (Rectangle, Circle, etc.)</li>
+        <li>Connection lines</li>
+        <li>Drag & Drop editing</li>
+        <li>Zoom and pan controls</li>
+        <li>Copy & Paste</li>
+        <li>Right-click context menu</li>
       </ul>
     </td>
     <td width="50%">
-      <h3>🎨 Tema Sistemi</h3>
+      <h3>🎨 Theme System</h3>
       <ul>
-        <li>6 Farklı tema seçeneği</li>
-        <li>8 Vurgu rengi</li>
-        <li>Dinamik frame renkleri</li>
+        <li>6 Different theme options</li>
+        <li>8 Accent colors</li>
+        <li>Dynamic frame colors</li>
         <li>Custom title bar</li>
         <li>Collapsible sidebar</li>
-        <li>LocalStorage ile kalıcı ayarlar</li>
+        <li>Persistent settings with LocalStorage</li>
       </ul>
     </td>
   </tr>
@@ -91,112 +91,112 @@
 
 ---
 
-## 🚀 Kurulum
+## 🚀 Installation
 
 ```bash
-# Repository'yi klonlayın
+# Clone the repository
 git clone https://github.com/yamacacan/PersonalProjectEditor.git
 
-# Proje dizinine gidin
+# Navigate to the project directory
 cd PersonalProjectEditor
 
-# Bağımlılıkları yükleyin
+# Install dependencies
 npm install
 
-# Geliştirme modunda çalıştırın
+# Run in development mode
 npm run electron:dev
 ```
 
 ## 📦 Production Build
 
 ```bash
-# Windows için build
+# Build for Windows
 npm run electron:build:win
 
-# macOS için build
+# Build for macOS
 npm run electron:build:mac
 
-# Linux için build
+# Build for Linux
 npm run electron:build:linux
 ```
 
-> 📁 Build dosyaları `release/` klasöründe oluşturulur.
+> 📁 Build files are generated in the `release/` folder.
 
 ---
 
-## 🛠️ Teknolojiler
+## 🛠️ Technologies
 
 <div align="center">
 
-| Teknoloji | Versiyon | Açıklama |
-|:---------:|:--------:|:---------|
-| ![Electron](https://img.shields.io/badge/Electron-47848F?style=flat-square&logo=electron&logoColor=white) | 28.x | Masaüstü uygulama framework'ü |
-| ![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black) | 18.x | UI kütüphanesi |
+| Technology | Version | Description |
+|:---------:|:--------:|:-----------|
+| ![Electron](https://img.shields.io/badge/Electron-47848F?style=flat-square&logo=electron&logoColor=white) | 28.x | Desktop application framework |
+| ![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black) | 18.x | UI library |
 | ![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white) | 5.x | Build tool |
 | ![Tailwind](https://img.shields.io/badge/Tailwind-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white) | 3.x | CSS framework |
-| ![electron-builder](https://img.shields.io/badge/Builder-1B1F23?style=flat-square&logo=electron&logoColor=white) | 24.x | Paketleme aracı |
+| ![electron-builder](https://img.shields.io/badge/Builder-1B1F23?style=flat-square&logo=electron&logoColor=white) | 24.x | Packaging tool |
 
 </div>
 
 ---
 
-## 📁 Proje Yapısı
+## 📁 Project Structure
 
 ```
 PersonalProjectEditor/
-├── 📁 build/               # Build kaynakları ve ikonlar
+├── 📁 build/               # Build resources and icons
 ├── 📁 electron/
-│   ├── main.js            # Electron ana süreç
-│   └── preload.js         # IPC köprüsü
+│   ├── main.js            # Electron main process
+│   └── preload.js         # IPC bridge
 ├── 📁 src/
 │   ├── 📁 components/
-│   │   ├── KanbanBoard.jsx    # Kanban panosu
-│   │   ├── NoteEditor.jsx     # Not editörü
-│   │   ├── ProjectCanvas.jsx  # Mimari kanvas
-│   │   ├── Settings.jsx       # Ayarlar sayfası
+│   │   ├── KanbanBoard.jsx    # Kanban board
+│   │   ├── NoteEditor.jsx     # Note editor
+│   │   ├── ProjectCanvas.jsx  # Architecture canvas
+│   │   ├── Settings.jsx       # Settings page
 │   │   ├── TitleBar.jsx       # Custom title bar
 │   │   ├── Sidebar.jsx        # Navigation sidebar
-│   │   └── Trashhold.jsx      # Çöp kutusu drop zone
+│   │   └── Trashhold.jsx      # Trash bin drop zone
 │   ├── 📁 utils/
-│   │   └── storage.js     # Veri yönetimi
+│   │   └── storage.js     # Data management
 │   ├── App.jsx
 │   └── index.css
-├── 📁 readmeassets/       # README görselleri
+├── 📁 readmeassets/       # README assets
 └── 📄 README.md
 ```
 
 ---
 
-## 💾 Veri Saklama
+## 💾 Data Storage
 
-Veriler kullanıcının `userData` dizininde güvenle saklanır:
+Data is safely stored in the user's `userData` directory:
 
-| Platform | Konum |
-|----------|-------|
+| Platform | Location |
+|----------|----------|
 | 🪟 Windows | `%APPDATA%/kanban-app/appData/` |
 | 🍎 macOS | `~/Library/Application Support/kanban-app/appData/` |
 | 🐧 Linux | `~/.config/kanban-app/appData/` |
 
 ---
 
-## 🎨 Tema Seçenekleri
+## 🎨 Theme Options
 
 <div align="center">
 
-| Tema | Görünüm |
-|:----:|:-------:|
-| 🌑 Koyu | Slate tonları, klasik karanlık tema |
-| 🌙 Gece Mavisi | İndigo vurgulu, gece havası |
-| 🌊 Okyanus | Cyan tonları, ferah okyanus teması |
-| 🌲 Orman | Yeşil tonlar, doğal orman teması |
-| 🌅 Gün Batımı | Kırmızı tonlar, sıcak gün batımı |
-| 💜 Mor Rüya | Mor tonları, şık ve modern |
+| Theme | Appearance |
+|:-----:|:----------:|
+| 🌑 Dark | Slate tones, classic dark theme |
+| 🌙 Night Blue | Indigo accent, night atmosphere |
+| 🌊 Ocean | Cyan tones, refreshing ocean theme |
+| 🌲 Forest | Green tones, natural forest theme |
+| 🌅 Sunset | Red tones, warm sunset |
+| 💜 Purple Dream | Purple tones, elegant and modern |
 
 </div>
 
 ---
 
-## 👤 Geliştirici
+## 👤 Developer
 
 <div align="center">
   
@@ -207,24 +207,17 @@ Veriler kullanıcının `userData` dizininde güvenle saklanır:
 
 </div>
 
----
-
-## 📝 Lisans
-
-Bu proje **MIT License** altında lisanslanmıştır.
-
----
 
 <div align="center">
 
-### ⭐ Bu projeyi beğendiyseniz yıldız vermeyi unutmayın!
+### ⭐ Don't forget to star this project if you liked it!
 
 <br/>
 
-**Personal Project Editor** ile projelerinizi organize edin! 🚀
+Organize your projects with **Personal Project Editor**! 🚀
 
 <br/>
 
-*© 2026 Ahmet Can Yamaç. Tüm hakları saklıdır.*
+*© 2026 Ahmet Can Yamaç. All rights reserved.*
 
 </div>
