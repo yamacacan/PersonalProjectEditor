@@ -15,7 +15,7 @@ const Sidebar = ({ activeView, onViewChange }) => {
         },
         {
             id: 'notes',
-            label: 'Not Defteri',
+            label: 'Notebook',
             icon: (
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -24,7 +24,7 @@ const Sidebar = ({ activeView, onViewChange }) => {
         },
         {
             id: 'projects',
-            label: 'Proje Kanvası',
+            label: 'Project Canvas',
             icon: (
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
@@ -85,7 +85,7 @@ const Sidebar = ({ activeView, onViewChange }) => {
                     <button
                         onClick={() => onViewChange('settings')}
                         className={`sidebar-item w-full ${activeView === 'settings' ? 'sidebar-item-active' : 'sidebar-item-muted'}`}
-                        title={!isExpanded ? 'Ayarlar' : ''}
+                        title={!isExpanded ? 'Settings' : ''}
                     >
                         <div className="sidebar-item-icon">
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -94,7 +94,7 @@ const Sidebar = ({ activeView, onViewChange }) => {
                             </svg>
                         </div>
                         <span className={`sidebar-item-label ${isExpanded ? 'opacity-100' : 'opacity-0 w-0'}`}>
-                            Ayarlar
+                            Settings
                         </span>
                         {activeView === 'settings' && (
                             <div className="sidebar-item-indicator" />
@@ -105,7 +105,7 @@ const Sidebar = ({ activeView, onViewChange }) => {
 
             {/* Expand Indicator */}
             <div className={`sidebar-expand-indicator ${isExpanded ? 'opacity-0' : 'opacity-100'}`}>
-                <svg className="w-3 h-3 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-3 h-3" style={{ color: 'var(--text-muted)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
             </div>

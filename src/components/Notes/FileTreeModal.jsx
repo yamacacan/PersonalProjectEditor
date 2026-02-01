@@ -146,9 +146,9 @@ const FileTreeModal = ({ isOpen, onClose, files = [], onAddFiles, onDeleteFile, 
             />
 
             {/* Modal */}
-            <div className="relative w-full max-w-4xl max-h-[85vh] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl shadow-2xl border border-slate-700/50 flex flex-col overflow-hidden">
+            <div className="relative w-full max-w-4xl max-h-[85vh] rounded-2xl shadow-2xl border flex flex-col overflow-hidden" style={{ backgroundColor: 'var(--panel-bg)', borderColor: 'var(--panel-border)' }}>
                 {/* Header */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700/50">
+                <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: 'var(--panel-border)' }}>
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg">
                             <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -156,17 +156,18 @@ const FileTreeModal = ({ isOpen, onClose, files = [], onAddFiles, onDeleteFile, 
                             </svg>
                         </div>
                         <div>
-                            <h2 className="text-xl font-bold text-white">Dosyalarım</h2>
-                            <p className="text-sm text-slate-400">{files.length} dosya</p>
+                            <h2 className="text-xl font-bold" style={{ color: 'var(--text-main)' }}>My Files</h2>
+                            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{files.length} files</p>
                         </div>
                     </div>
 
                     {/* View Mode Toggle & Close */}
                     <div className="flex items-center gap-2">
-                        <div className="flex items-center bg-slate-800/50 rounded-lg p-1">
+                        <div className="flex items-center rounded-lg p-1" style={{ backgroundColor: 'var(--frame-bg)' }}>
                             <button
                                 onClick={() => setViewMode('grid')}
-                                className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-primary-500/20 text-primary-400' : 'text-slate-400 hover:text-white'}`}
+                                className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-primary-500/20 text-primary-400' : 'hover:text-white'}`}
+                                style={{ color: viewMode === 'grid' ? 'var(--accent-500)' : 'var(--text-muted)' }}
                             >
                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -174,7 +175,8 @@ const FileTreeModal = ({ isOpen, onClose, files = [], onAddFiles, onDeleteFile, 
                             </button>
                             <button
                                 onClick={() => setViewMode('list')}
-                                className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-primary-500/20 text-primary-400' : 'text-slate-400 hover:text-white'}`}
+                                className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-primary-500/20 text-primary-400' : 'hover:text-white'}`}
+                                style={{ color: viewMode === 'list' ? 'var(--accent-500)' : 'var(--text-muted)' }}
                             >
                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
@@ -183,7 +185,8 @@ const FileTreeModal = ({ isOpen, onClose, files = [], onAddFiles, onDeleteFile, 
                         </div>
                         <button
                             onClick={onClose}
-                            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all"
+                            className="p-2 rounded-lg hover:text-white hover:bg-white/10 transition-all"
+                            style={{ color: 'var(--text-muted)' }}
                         >
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -193,17 +196,18 @@ const FileTreeModal = ({ isOpen, onClose, files = [], onAddFiles, onDeleteFile, 
                 </div>
 
                 {/* Search & Actions Bar */}
-                <div className="flex items-center gap-3 px-6 py-3 border-b border-slate-700/30">
+                <div className="flex items-center gap-3 px-6 py-3 border-b" style={{ borderColor: 'var(--panel-border)' }}>
                     <div className="flex-1 relative">
-                        <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-muted)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                         <input
                             type="text"
-                            placeholder="Dosya ara..."
+                            placeholder="Search files..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2.5 bg-slate-800/50 border border-slate-700/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-primary-500/50 focus:ring-2 focus:ring-primary-500/20 transition-all"
+                            className="w-full pl-10 pr-4 py-2.5 border rounded-xl placeholder-slate-400 focus:outline-none focus:border-primary-500 transition-all"
+                            style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--panel-border)', color: 'var(--text-main)' }}
                         />
                     </div>
                     <button
@@ -213,7 +217,7 @@ const FileTreeModal = ({ isOpen, onClose, files = [], onAddFiles, onDeleteFile, 
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                         </svg>
-                        Dosya Ekle
+                        Add File
                     </button>
                     <input
                         ref={fileInputRef}
@@ -236,27 +240,29 @@ const FileTreeModal = ({ isOpen, onClose, files = [], onAddFiles, onDeleteFile, 
               relative mb-6 border-2 border-dashed rounded-2xl transition-all duration-300
               ${isDragging
                                 ? 'border-primary-500 bg-primary-500/10 scale-[1.01]'
-                                : 'border-slate-700/50 hover:border-slate-600'
+                                : 'hover:border-slate-500'
                             }
             `}
+                        style={{ backgroundColor: isDragging ? undefined : 'var(--frame-bg)', borderColor: isDragging ? undefined : 'var(--panel-border)' }}
                     >
                         <div className="flex flex-col items-center justify-center py-10">
                             <div className={`
                 w-16 h-16 rounded-2xl flex items-center justify-center mb-4 transition-all
-                ${isDragging ? 'bg-primary-500/20 scale-110' : 'bg-slate-800/50'}
-              `}>
-                                <svg className={`w-8 h-8 transition-colors ${isDragging ? 'text-primary-400' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                ${isDragging ? 'bg-primary-500/20 scale-110' : ''}
+              `}
+                                style={{ backgroundColor: isDragging ? undefined : 'var(--panel-bg)' }}>
+                                <svg className={`w-8 h-8 transition-colors ${isDragging ? 'text-primary-400' : ''}`} style={{ color: isDragging ? undefined : 'var(--text-muted)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                                 </svg>
                             </div>
-                            <p className="text-lg font-medium text-white mb-1">
-                                {isDragging ? 'Dosyaları buraya bırakın' : 'Dosyaları sürükleyip bırakın'}
+                            <p className="text-lg font-medium mb-1" style={{ color: 'var(--text-main)' }}>
+                                {isDragging ? 'Drop files here' : 'Drag and drop files'}
                             </p>
-                            <p className="text-sm text-slate-400">
-                                veya <button onClick={() => fileInputRef.current?.click()} className="text-primary-400 hover:text-primary-300 underline">bilgisayarınızdan seçin</button>
+                            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+                                or <button onClick={() => fileInputRef.current?.click()} className="text-primary-400 hover:text-primary-300 underline">select from your computer</button>
                             </p>
-                            <p className="text-xs text-slate-500 mt-3">
-                                PDF, Word, Excel, PowerPoint, Resimler, Video ve daha fazlası
+                            <p className="text-xs opacity-50 mt-3" style={{ color: 'var(--text-muted)' }}>
+                                PDF, Word, Excel, PowerPoint, Images, Videos and more
                             </p>
                         </div>
                     </div>
@@ -271,7 +277,8 @@ const FileTreeModal = ({ isOpen, onClose, files = [], onAddFiles, onDeleteFile, 
                                         <div
                                             key={file.id}
                                             onClick={() => handleFileClick(file)}
-                                            className="group relative bg-slate-800/40 hover:bg-slate-800/60 border border-slate-700/50 hover:border-slate-600 rounded-xl p-4 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-xl"
+                                            className="group relative border rounded-xl p-4 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-xl"
+                                            style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--panel-border)' }}
                                         >
                                             {/* Delete Button */}
                                             <button
@@ -297,10 +304,10 @@ const FileTreeModal = ({ isOpen, onClose, files = [], onAddFiles, onDeleteFile, 
                                             </div>
 
                                             {/* File Info */}
-                                            <p className="text-sm font-medium text-white truncate" title={file.name}>
+                                            <p className="text-sm font-medium truncate" style={{ color: 'var(--text-main)' }} title={file.name}>
                                                 {file.name}
                                             </p>
-                                            <p className="text-xs text-slate-400 mt-1">
+                                            <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
                                                 {formatFileSize(file.size)}
                                             </p>
                                         </div>
@@ -315,7 +322,8 @@ const FileTreeModal = ({ isOpen, onClose, files = [], onAddFiles, onDeleteFile, 
                                         <div
                                             key={file.id}
                                             onClick={() => handleFileClick(file)}
-                                            className="group flex items-center gap-4 bg-slate-800/40 hover:bg-slate-800/60 border border-slate-700/50 hover:border-slate-600 rounded-xl px-4 py-3 cursor-pointer transition-all duration-200"
+                                            className="group flex items-center gap-4 border rounded-xl px-4 py-3 cursor-pointer transition-all duration-200"
+                                            style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--panel-border)' }}
                                         >
                                             {/* Icon */}
                                             <div className={`w-12 h-12 rounded-xl ${fileType.bg} flex items-center justify-center flex-shrink-0 overflow-hidden`}>
@@ -332,11 +340,11 @@ const FileTreeModal = ({ isOpen, onClose, files = [], onAddFiles, onDeleteFile, 
 
                                             {/* Info */}
                                             <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-medium text-white truncate">
+                                                <p className="text-sm font-medium truncate" style={{ color: 'var(--text-main)' }}>
                                                     {file.name}
                                                 </p>
-                                                <p className="text-xs text-slate-400 mt-0.5">
-                                                    {formatFileSize(file.size)} • {new Date(file.createdAt).toLocaleDateString('tr-TR')}
+                                                <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
+                                                    {formatFileSize(file.size)} • {new Date(file.createdAt).toLocaleDateString()}
                                                 </p>
                                             </div>
 
@@ -355,12 +363,12 @@ const FileTreeModal = ({ isOpen, onClose, files = [], onAddFiles, onDeleteFile, 
                             </div>
                         )
                     ) : (
-                        <div className="flex flex-col items-center justify-center py-12 text-slate-400">
+                        <div className="flex flex-col items-center justify-center py-12" style={{ color: 'var(--text-muted)' }}>
                             <svg className="w-16 h-16 mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" />
                             </svg>
-                            <p className="text-lg font-medium">Henüz dosya yok</p>
-                            <p className="text-sm mt-1">Dosya eklemek için yukarıdaki alanı kullanın</p>
+                            <p className="text-lg font-medium">No files yet</p>
+                            <p className="text-sm mt-1">Use the area above to add files</p>
                         </div>
                     )}
                 </div>
@@ -371,8 +379,8 @@ const FileTreeModal = ({ isOpen, onClose, files = [], onAddFiles, onDeleteFile, 
                 isOpen={deleteModal.isOpen}
                 onClose={() => setDeleteModal({ ...deleteModal, isOpen: false })}
                 onConfirm={handleDeleteConfirm}
-                title="Dosyayı Sil"
-                message={`"${deleteModal.fileName}" dosyasını silmek istediğinize emin misiniz?`}
+                title="Delete File"
+                message={`Are you sure you want to delete the file "${deleteModal.fileName}"?`}
             />
         </div>
     );

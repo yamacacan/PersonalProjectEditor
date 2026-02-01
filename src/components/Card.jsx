@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { loadImage } from '../utils/storage';
 
 const PRIORITY_CONFIG = {
-  low: { color: 'bg-slate-500', label: 'Düşük' },
-  medium: { color: 'bg-amber-500', label: 'Orta' },
-  high: { color: 'bg-red-500', label: 'Yüksek' },
+  low: { color: 'bg-slate-500', label: 'Low' },
+  medium: { color: 'bg-amber-500', label: 'Medium' },
+  high: { color: 'bg-red-500', label: 'High' },
 };
 
 const getInitials = (name) => {
@@ -148,7 +148,7 @@ const Card = ({ card, onViewDetail, onDragStart, onDragEnd }) => {
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                {new Date(card.dueDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
+                {new Date(card.dueDate).toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}
               </span>
             )}
           </div>

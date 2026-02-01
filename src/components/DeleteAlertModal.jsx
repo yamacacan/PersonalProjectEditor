@@ -4,11 +4,11 @@ const DeleteAlertModal = ({
     isOpen,
     onClose,
     onConfirm,
-    title = "Silme Onayı",
-    message = "Bu öğeyi silmek istediğinize emin misiniz?",
-    confirmText = "Sil",
-    cancelText = "İptal",
-    type = "danger" // "danger" veya "warning"
+    title = "Delete Confirmation",
+    message = "Are you sure you want to delete this item?",
+    confirmText = "Delete",
+    cancelText = "Cancel",
+    type = "danger" // "danger" or "warning"
 }) => {
     if (!isOpen) return null;
 

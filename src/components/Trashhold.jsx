@@ -41,23 +41,27 @@ const Trashhold = ({ onCardDrop, isVisible }) => {
                 px-8 py-4 rounded-2xl
                 border-2 border-dashed
                 transition-all duration-300 ease-out
-                ${isDragOver
-                    ? 'bg-red-500/30 border-red-400 scale-110 shadow-2xl shadow-red-500/50'
-                    : 'bg-slate-900/90 border-slate-600 backdrop-blur-sm'
-                }
+                ${isDragOver ? 'scale-110 shadow-2xl shadow-red-500/50' : 'backdrop-blur-sm'}
             `}
+            style={{
+                backgroundColor: isDragOver ? 'rgba(239, 68, 68, 0.3)' : 'var(--panel-bg)',
+                borderColor: isDragOver ? '#f87171' : 'var(--panel-border)'
+            }}
         >
             {/* Trash Icon */}
-            <div className={`
-                w-12 h-12 rounded-xl flex items-center justify-center
-                transition-all duration-300
-                ${isDragOver
-                    ? 'bg-red-500 text-white scale-110'
-                    : 'bg-slate-700 text-slate-400'
-                }
-            `}>
+            <div
+                className={`
+                    w-12 h-12 rounded-xl flex items-center justify-center
+                    transition-all duration-300
+                    ${isDragOver ? 'bg-red-500 text-white scale-110' : ''}
+                `}
+                style={{
+                    backgroundColor: isDragOver ? undefined : 'var(--frame-bg)',
+                    color: isDragOver ? undefined : 'var(--text-muted)'
+                }}
+            >
                 <svg
-                    className={`w-6 h-6 transition-transform duration-300 ${isDragOver ? 'scale-125' : ''}`}
+                    className={`w - 6 h - 6 transition - transform duration - 300 ${isDragOver ? 'scale-125' : ''} `}
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -73,17 +77,17 @@ const Trashhold = ({ onCardDrop, isVisible }) => {
 
             {/* Text */}
             <div className="flex flex-col">
-                <span className={`
-                    font-semibold text-sm transition-colors duration-300
-                    ${isDragOver ? 'text-red-300' : 'text-slate-300'}
-                `}>
-                    {isDragOver ? 'Bırakarak Sil' : 'Silmek İçin Sürükle'}
+                <span
+                    className="font-semibold text-sm transition-colors duration-300"
+                    style={{ color: isDragOver ? '#fca5a5' : 'var(--text-main)' }}
+                >
+                    {isDragOver ? 'Drop to Delete' : 'Drag to Delete'}
                 </span>
-                <span className={`
-                    text-xs transition-colors duration-300
-                    ${isDragOver ? 'text-red-400' : 'text-slate-500'}
-                `}>
-                    {isDragOver ? 'Kartı buraya bırakın' : 'Kartları çöp kutusuna sürükleyin'}
+                <span
+                    className="text-xs transition-colors duration-300"
+                    style={{ color: isDragOver ? '#f87171' : 'var(--text-muted)' }}
+                >
+                    {isDragOver ? 'Drop the card here' : 'Drag the card to delete'}
                 </span>
             </div>
 

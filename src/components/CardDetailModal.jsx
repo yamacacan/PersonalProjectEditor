@@ -6,23 +6,23 @@ import { saveImage, loadImage, deleteImage } from '../utils/storage';
 
 
 const PRIORITY_OPTIONS = [
-  { value: 'low', label: 'Düşük', color: 'bg-slate-500' },
-  { value: 'medium', label: 'Orta', color: 'bg-amber-500' },
-  { value: 'high', label: 'Yüksek', color: 'bg-red-500' },
+  { value: 'low', label: 'Low', color: 'bg-slate-500' },
+  { value: 'medium', label: 'Medium', color: 'bg-amber-500' },
+  { value: 'high', label: 'High', color: 'bg-red-500' },
 ];
 
 const TAG_COLORS = [
-  { value: '#3b82f6', label: 'Mavi' },
-  { value: '#22c55e', label: 'Yeşil' },
-  { value: '#a855f7', label: 'Mor' },
-  { value: '#f97316', label: 'Turuncu' },
-  { value: '#14b8a6', label: 'Turkuaz' },
-  { value: '#ef4444', label: 'Kırmızı' },
-  { value: '#eab308', label: 'Sarı' },
-  { value: '#64748b', label: 'Gri' },
+  { value: '#3b82f6', label: 'Blue' },
+  { value: '#10b981', label: 'Green' },
+  { value: '#f59e0b', label: 'Amber' },
+  { value: '#ef4444', label: 'Red' },
+  { value: '#8b5cf6', label: 'Purple' },
+  { value: '#ec4899', label: 'Pink' },
+  { value: '#06b6d4', label: 'Cyan' },
+  { value: '#84cc16', label: 'Lime' },
 ];
 
-const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
+const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete, availableTags = [] }) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -37,6 +37,7 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
 
   const [newTag, setNewTag] = useState('');
   const [newTagColor, setNewTagColor] = useState(TAG_COLORS[0].value);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [newTodo, setNewTodo] = useState('');
   const [isImageViewerOpen, setIsImageViewerOpen] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
@@ -107,13 +108,17 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
     }
   };
 
-  const handleAddTag = () => {
-    if (newTag.trim() && !formData.tags.some(t => t.text === newTag.trim())) {
+  const handleAddTag = (tagToAdd = null) => {
+    const text = tagToAdd ? tagToAdd.text : newTag.trim();
+    const color = tagToAdd ? tagToAdd.color : newTagColor;
+
+    if (text && !formData.tags.some(t => t.text === text)) {
       setFormData({
         ...formData,
-        tags: [...formData.tags, { text: newTag.trim(), color: newTagColor }]
+        tags: [...formData.tags, { text, color }]
       });
       setNewTag('');
+      setShowSuggestions(false);
     }
   };
 
@@ -127,8 +132,8 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
   const handleDelete = () => {
     setDeleteModal({
       isOpen: true,
-      title: 'Kart Silme',
-      message: 'Bu kartı silmek istediğinize emin misiniz?',
+      title: 'Delete Card',
+      message: 'Are you sure you want to delete this card?',
       onConfirm: () => {
         onDelete(card.id);
         onClose();
@@ -148,7 +153,7 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
     if (file) {
       // Check file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        alert('Dosya boyutu 5MB\'dan küçük olmalıdır.');
+        alert('File size must be less than 5MB.');
         return;
       }
 
@@ -210,11 +215,12 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
       <div className="w-full max-w-2xl themed-modal rounded-2xl shadow-2xl border overflow-hidden animate-slide-up" style={{ backgroundColor: 'var(--panel-bg)', borderColor: 'var(--panel-border)' }}>
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: '1px solid var(--panel-border)' }}>
-          <h2 className="text-lg font-semibold text-white">Kart Detayları</h2>
+          <h2 className="text-lg font-semibold" style={{ color: 'var(--text-main)' }}>Card Details</h2>
           <button
             type="button"
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
+            className="p-2 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+            style={{ color: 'var(--text-muted)' }}
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -226,7 +232,7 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
         <div className="px-6 py-5 max-h-[65vh] overflow-y-auto space-y-5">
           {/* Image Upload */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Kapak Resmi</label>
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-muted)' }}>Cover Image</label>
             {imagePreview ? (
               <div className="relative group">
                 <img
@@ -250,14 +256,14 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
                     onClick={() => fileInputRef.current?.click()}
                     className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white text-sm font-medium rounded-lg transition-colors"
                   >
-                    Değiştir
+                    Change
                   </button>
                   <button
                     type="button"
                     onClick={handleRemoveImage}
                     className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-lg transition-colors"
                   >
-                    Kaldır
+                    Remove
                   </button>
                 </div>
               </div>
@@ -265,13 +271,14 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full h-32 border-2 border-dashed border-slate-600 hover:border-primary-500 rounded-xl flex flex-col items-center justify-center gap-2 text-slate-400 hover:text-primary-400 transition-colors"
+                className="w-full h-32 border-2 border-dashed rounded-xl flex flex-col items-center justify-center gap-2 transition-colors"
+                style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--panel-border)', color: 'var(--text-muted)' }}
               >
                 <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                <span className="text-sm font-medium">Resim Yükle</span>
-                <span className="text-xs text-slate-500">PNG, JPG, GIF (max 5MB)</span>
+                <span className="text-sm font-medium">Upload Image</span>
+                <span className="text-xs opacity-60">PNG, JPG, GIF (max 5MB)</span>
               </button>
             )}
             <input
@@ -286,42 +293,45 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
           {/* Card ID & Title Row */}
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Kart ID</label>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-muted)' }}>Card ID</label>
               <input
                 type="text"
                 value={formData.cardId}
                 onChange={(e) => setFormData({ ...formData, cardId: e.target.value })}
                 placeholder="TASK-123"
-                className="w-full px-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-primary-500 transition-colors"
+                className="w-full px-4 py-2.5 border rounded-xl placeholder-slate-400 focus:outline-none focus:border-primary-500 transition-colors"
+                style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--panel-border)', color: 'var(--text-main)' }}
               />
             </div>
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-slate-300 mb-2">Başlık *</label>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-muted)' }}>Title *</label>
               <input
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder="Kart başlığı"
-                className="w-full px-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-primary-500 transition-colors"
+                placeholder="Card title"
+                className="w-full px-4 py-2.5 border rounded-xl placeholder-slate-400 focus:outline-none focus:border-primary-500 transition-colors"
+                style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--panel-border)', color: 'var(--text-main)' }}
               />
             </div>
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Açıklama</label>
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-muted)' }}>Description</label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Detaylı açıklama yazın..."
+              placeholder="Write detailed description..."
               rows="3"
-              className="w-full px-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 resize-none focus:outline-none focus:border-primary-500 transition-colors"
+              className="w-full px-4 py-2.5 border rounded-xl placeholder-slate-400 resize-none focus:outline-none focus:border-primary-500 transition-colors"
+              style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--panel-border)', color: 'var(--text-main)' }}
             />
           </div>
 
           {/* Tags */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Etiketler</label>
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-muted)' }}>Tags</label>
 
             {/* Existing Tags */}
             {formData.tags.length > 0 && (
@@ -348,20 +358,55 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
             )}
 
             {/* Add Tag */}
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
-                placeholder="Yeni etiket"
-                className="flex-1 px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 text-sm focus:outline-none focus:border-primary-500 transition-colors"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleAddTag();
-                  }
-                }}
-              />
+            <div className="flex gap-2 relative">
+              <div className="flex-1 relative">
+                <input
+                  type="text"
+                  value={newTag}
+                  onChange={(e) => {
+                    setNewTag(e.target.value);
+                    setShowSuggestions(true);
+                  }}
+                  onFocus={() => setShowSuggestions(true)}
+                  onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                  placeholder="New tag..."
+                  className="w-full px-4 py-2 border rounded-lg placeholder-slate-400 text-sm focus:outline-none focus:border-primary-500 transition-colors"
+                  style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--panel-border)', color: 'var(--text-main)' }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddTag();
+                    }
+                  }}
+                />
+
+                {/* Suggestions Dropdown */}
+                {showSuggestions && (
+                  <div className="absolute top-full left-0 right-0 mt-1 border rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto" style={{ backgroundColor: 'var(--panel-bg)', borderColor: 'var(--panel-border)' }}>
+                    {availableTags
+                      .filter(tag =>
+                        tag.text.toLowerCase().includes(newTag.toLowerCase()) &&
+                        !formData.tags.some(t => t.text === tag.text)
+                      )
+                      .map((tag, i) => (
+                        <button
+                          key={`${tag.text}-${i}`}
+                          onClick={() => handleAddTag(tag)}
+                          className="w-full text-left px-3 py-2 hover:bg-white/5 flex items-center gap-2"
+                        >
+                          <span className="w-3 h-3 rounded-full" style={{ backgroundColor: tag.color }} />
+                          <span className="text-sm" style={{ color: 'var(--text-muted)' }}>{tag.text}</span>
+                        </button>
+                      ))}
+                    {newTag && !availableTags.some(t => t.text.toLowerCase() === newTag.toLowerCase()) && (
+                      <div className="px-3 py-2 text-xs opacity-50 italic">
+                        Press Enter to create new "{newTag}"
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
               <div className="flex gap-1 items-center">
                 {TAG_COLORS.map((color) => (
                   <button
@@ -376,10 +421,10 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
               </div>
               <button
                 type="button"
-                onClick={handleAddTag}
+                onClick={() => handleAddTag()}
                 className="px-3 py-2 bg-primary-500 hover:bg-primary-600 text-white text-sm font-medium rounded-lg transition-colors"
               >
-                Ekle
+                Add
               </button>
             </div>
           </div>
@@ -388,19 +433,20 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
           <div className="grid grid-cols-2 gap-4">
             {/* Assignee */}
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Atanan Kişi</label>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-muted)' }}>Assignee</label>
               <input
                 type="text"
                 value={formData.assignedTo}
                 onChange={(e) => setFormData({ ...formData, assignedTo: e.target.value })}
-                placeholder="İsim"
-                className="w-full px-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-primary-500 transition-colors"
+                placeholder="Name"
+                className="w-full px-4 py-2.5 border rounded-xl placeholder-slate-400 focus:outline-none focus:border-primary-500 transition-colors"
+                style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--panel-border)', color: 'var(--text-main)' }}
               />
             </div>
 
             {/* Priority */}
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Öncelik</label>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-muted)' }}>Priority</label>
               <div className="flex gap-1">
                 {PRIORITY_OPTIONS.map((option) => (
                   <button
@@ -409,8 +455,12 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
                     onClick={() => setFormData({ ...formData, priority: option.value })}
                     className={`flex-1 px-2 py-2.5 rounded-xl text-xs font-medium transition-all ${formData.priority === option.value
                       ? `${option.color} text-white`
-                      : 'bg-slate-700/50 text-slate-400 hover:bg-slate-700 hover:text-white'
+                      : 'hover:text-white'
                       }`}
+                    style={{
+                      backgroundColor: formData.priority === option.value ? undefined : 'var(--frame-bg)',
+                      color: formData.priority === option.value ? undefined : 'var(--text-muted)'
+                    }}
                   >
                     {option.label}
                   </button>
@@ -421,17 +471,17 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
 
           {/* Due Date - Full Width at Bottom */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Bitiş Tarihi</label>
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-muted)' }}>Due Date</label>
             <DatePicker
               value={formData.dueDate}
               onChange={(date) => setFormData({ ...formData, dueDate: date })}
-              placeholder="Tarih seçin"
+              placeholder="Select date"
             />
           </div>
 
           {/* Todo List */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Yapılacaklar</label>
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-muted)' }}>Todos</label>
 
             {/* Existing Todos */}
             {formData.todos.length > 0 && (
@@ -439,15 +489,17 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
                 {formData.todos.map((todo) => (
                   <div
                     key={todo.id}
-                    className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-lg border border-slate-600/50 hover:border-slate-500 transition-colors group"
+                    className="flex items-center gap-3 p-3 rounded-lg border transition-colors group"
+                    style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--panel-border)' }}
                   >
                     <button
                       type="button"
                       onClick={() => handleToggleTodo(todo.id)}
                       className={`flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${todo.completed
                         ? 'bg-primary-500 border-primary-500'
-                        : 'border-slate-500 hover:border-primary-500'
+                        : 'border-transparent hover:border-primary-500'
                         }`}
+                      style={{ borderColor: todo.completed ? undefined : 'var(--panel-border)' }}
                     >
                       {todo.completed && (
                         <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -456,10 +508,11 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
                       )}
                     </button>
                     <span
-                      className={`flex-1 text-sm transition-all ${todo.completed
-                        ? 'text-slate-500 line-through'
-                        : 'text-slate-200'
-                        }`}
+                      className="flex-1 text-sm transition-all"
+                      style={{
+                        color: todo.completed ? 'var(--text-muted)' : 'var(--text-main)',
+                        textDecoration: todo.completed ? 'line-through' : 'none'
+                      }}
                     >
                       {todo.text}
                     </span>
@@ -483,8 +536,9 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
                 type="text"
                 value={newTodo}
                 onChange={(e) => setNewTodo(e.target.value)}
-                placeholder="Yeni görev ekle..."
-                className="flex-1 px-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 text-sm focus:outline-none focus:border-primary-500 transition-colors"
+                placeholder="Add new task..."
+                className="flex-1 px-4 py-2.5 border rounded-xl placeholder-slate-400 text-sm focus:outline-none focus:border-primary-500 transition-colors"
+                style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--panel-border)', color: 'var(--text-main)' }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     e.preventDefault();
@@ -500,20 +554,20 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
-                Ekle
+                Add
               </button>
             </div>
 
             {/* Progress Bar */}
             {formData.todos.length > 0 && (
               <div className="mt-3">
-                <div className="flex items-center justify-between text-xs text-slate-400 mb-1.5">
-                  <span>İlerleme</span>
+                <div className="flex items-center justify-between text-xs mb-1.5" style={{ color: 'var(--text-muted)' }}>
+                  <span>Progress</span>
                   <span>
                     {formData.todos.filter((t) => t.completed).length} / {formData.todos.length}
                   </span>
                 </div>
-                <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--frame-bg)' }}>
                   <div
                     className="h-full bg-gradient-to-r from-primary-500 to-primary-400 transition-all duration-300"
                     style={{
@@ -537,22 +591,23 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
             </svg>
-            Sil
+            Delete
           </button>
           <div className="flex gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded-xl font-medium transition-colors"
+              className="px-5 py-2.5 hover:text-white hover:bg-white/10 rounded-xl font-medium transition-colors"
+              style={{ color: 'var(--text-muted)' }}
             >
-              İptal
+              Cancel
             </button>
             <button
               type="button"
               onClick={handleSave}
               className="px-5 py-2.5 bg-primary-500 hover:bg-primary-600 text-white rounded-xl font-medium transition-colors"
             >
-              Kaydet
+              Save
             </button>
           </div>
         </div>
@@ -573,7 +628,7 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete }) => {
         title={deleteModal.title}
         message={deleteModal.message}
       />
-    </div>
+    </div >
   );
 };
 

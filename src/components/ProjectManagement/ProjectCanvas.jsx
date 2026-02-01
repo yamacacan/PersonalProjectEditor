@@ -5,14 +5,14 @@ const createId = (prefix) => `${prefix}-${Date.now()}-${Math.floor(Math.random()
 
 // Şekil tipleri
 const shapeTypes = [
-    { id: "rectangle", label: "Dikdörtgen", icon: "□" },
-    { id: "rounded", label: "Yuvarlatılmış", icon: "▢" },
-    { id: "diamond", label: "Eşkenar Dörtgen", icon: "◇" },
-    { id: "circle", label: "Daire", icon: "○" },
-    { id: "ellipse", label: "Elips", icon: "⬭" },
-    { id: "hexagon", label: "Altıgen", icon: "⬡" },
-    { id: "parallelogram", label: "Paralelkenar", icon: "▱" },
-    { id: "cylinder", label: "Silindir", icon: "⌭" },
+    { id: "rectangle", label: "Rectangle", icon: "□" },
+    { id: "rounded", label: "Rounded", icon: "▢" },
+    { id: "diamond", label: "Diamond", icon: "◇" },
+    { id: "circle", label: "Circle", icon: "○" },
+    { id: "ellipse", label: "Ellipse", icon: "⬭" },
+    { id: "hexagon", label: "Hexagon", icon: "⬡" },
+    { id: "parallelogram", label: "Parallelogram", icon: "▱" },
+    { id: "cylinder", label: "Cylinder", icon: "⌭" },
 ];
 
 const defaultNodeStyle = {
@@ -33,7 +33,7 @@ const createDefaultNode = (shape, x, y) => ({
     x, y,
     width: shape === "circle" ? 120 : 200,
     height: shape === "circle" ? 120 : 120,
-    title: "Yeni Öğe",
+    title: "New Item",
     description: "",
     style: { ...defaultNodeStyle },
     sections: [], // Bölümler: [{id, title, content, bgColor, textColor, height}]
@@ -44,7 +44,7 @@ const createDefaultNode = (shape, x, y) => ({
 
 const createDefaultSection = () => ({
     id: createId("sec"),
-    title: "Bölüm",
+    title: "Section",
     content: "",
     bgColor: "#283339",
     textColor: "#ffffff",
@@ -565,9 +565,9 @@ const ProjectCanvas = () => {
         return (
             <div className="h-full w-full flex items-center justify-center" style={{ backgroundColor: 'var(--canvas-bg)' }}>
                 <div className="w-96 p-6 rounded-xl border" style={{ backgroundColor: 'var(--panel-bg)', borderColor: 'var(--panel-border)' }}>
-                    <h2 className="text-lg font-bold text-white mb-4">Yeni Proje Oluştur</h2>
-                    <input value={newProjectName} onChange={(e) => setNewProjectName(e.target.value)} placeholder="Proje adı" className="w-full rounded-lg border px-3 py-2 text-sm text-white mb-3" style={{ backgroundColor: 'var(--canvas-bg)', borderColor: 'var(--panel-border)' }} onKeyDown={(e) => e.key === "Enter" && handleCreateProject()} />
-                    <button onClick={handleCreateProject} className="w-full rounded-lg px-4 py-2 text-sm font-bold text-white" style={{ backgroundColor: 'var(--accent-500)' }}>Oluştur</button>
+                    <h2 className="text-lg font-bold text-white mb-4">Create New Project</h2>
+                    <input value={newProjectName} onChange={(e) => setNewProjectName(e.target.value)} placeholder="Project name" className="w-full rounded-lg border px-3 py-2 text-sm text-white mb-3" style={{ backgroundColor: 'var(--canvas-bg)', borderColor: 'var(--panel-border)' }} onKeyDown={(e) => e.key === "Enter" && handleCreateProject()} />
+                    <button onClick={handleCreateProject} className="w-full rounded-lg px-4 py-2 text-sm font-bold text-white" style={{ backgroundColor: 'var(--accent-500)' }}>Create</button>
                 </div>
             </div>
         );
@@ -576,64 +576,121 @@ const ProjectCanvas = () => {
     return (
         <div className="h-full w-full overflow-hidden text-white flex flex-col" style={{ backgroundColor: 'var(--canvas-bg)' }}>
             {/* Header */}
-            <header className="flex items-center justify-between px-4 py-2 shrink-0" style={{ borderBottom: '1px solid var(--panel-border)' }}>
+            {/* Header */}
+            <header className="flex items-center justify-between px-6 py-4 shrink-0 backdrop-blur-xl border-b z-20" style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--frame-border)' }}>
                 <div className="flex items-center gap-4">
-                    <h2 className="font-bold text-[#13a4ec]">Mimari Kanvas</h2>
-                    <button onClick={() => setIsProjectMenuOpen(!isProjectMenuOpen)} className="text-sm text-slate-400 hover:text-white flex items-center gap-1">
-                        {activeProject?.name} <span className="text-xs">▼</span>
-                    </button>
-                    {isProjectMenuOpen && (
-                        <div className="absolute top-12 left-32 w-56 rounded-lg border border-[#283339] bg-[#1a252b] shadow-xl z-50 p-2">
-                            {projects.map(p => (
-                                <button key={p.id} onClick={() => { setActiveProjectId(p.id); setIsProjectMenuOpen(false); setSelectedIds(new Set()); }} className={`w-full text-left px-3 py-1.5 rounded text-sm ${p.id === activeProjectId ? "bg-[#13a4ec]/20 text-[#13a4ec]" : "text-slate-300 hover:bg-[#283339]"}`}>{p.name}</button>
-                            ))}
-                            <div className="border-t border-[#283339] mt-2 pt-2">
-                                <input value={newProjectName} onChange={e => setNewProjectName(e.target.value)} placeholder="Yeni proje..." className="w-full px-2 py-1 text-xs bg-[#101c22] border border-[#283339] rounded text-white" onKeyDown={e => e.key === "Enter" && handleCreateProject()} />
-                            </div>
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-blue-500/10 rounded-lg">
+                            <svg className="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
                         </div>
-                    )}
+                        <h2 className="font-bold text-lg text-white tracking-tight">Architecture Canvas</h2>
+                    </div>
+
+                    <div className="h-6 w-px bg-white/10 mx-2"></div>
+
+                    <div className="relative">
+                        <button
+                            onClick={() => setIsProjectMenuOpen(!isProjectMenuOpen)}
+                            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm hover:bg-white/5 transition-all"
+                            style={{ color: 'var(--text-muted)' }}
+                        >
+                            <span className="font-medium" style={{ color: 'var(--text-main)' }}>{activeProject?.name}</span>
+                            <svg className={`w-4 h-4 transition-transform duration-200 ${isProjectMenuOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+
+                        {isProjectMenuOpen && (
+                            <div className="absolute top-full left-0 mt-2 w-64 backdrop-blur-xl border rounded-xl shadow-2xl z-50 overflow-hidden" style={{ backgroundColor: 'var(--panel-bg)', borderColor: 'var(--panel-border)' }}>
+                                <div className="p-3 border-b bg-white/5" style={{ borderColor: 'var(--panel-border)' }}>
+                                    <h3 className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>My Projects</h3>
+                                </div>
+                                <div className="max-h-64 overflow-y-auto space-y-1">
+                                    {projects.map(project => (
+                                        <button
+                                            key={project.id}
+                                            onClick={() => {
+                                                setActiveProjectId(project.id);
+                                                setIsProjectMenuOpen(false);
+                                                setSelectedIds(new Set());
+                                            }}
+                                            className={`w-full text-left px-3 py-2 rounded-lg hover:bg-white/5 transition-all flex items-center justify-between group ${activeProjectId === project.id ? 'bg-primary-500/10 text-primary-400' : ''}`}
+                                            style={{ color: activeProjectId === project.id ? 'var(--accent-500)' : 'var(--text-main)' }}
+                                        >
+                                            <span className="font-medium text-sm truncate">{project.name}</span>
+                                            {project.id === activeProjectId && <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>}
+                                        </button>
+                                    ))}
+                                </div>
+                                <div className="p-3 border-t bg-black/20" style={{ borderColor: 'var(--panel-border)' }}>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            value={newProjectName}
+                                            onChange={(e) => setNewProjectName(e.target.value)}
+                                            placeholder="New Project..."
+                                            className="w-full px-3 py-2 text-xs bg-black/20 border rounded-lg focus:outline-none focus:border-blue-500/50 transition-colors"
+                                            style={{ color: 'var(--text-main)', borderColor: 'var(--panel-border)' }}
+                                            onKeyDown={e => e.key === "Enter" && handleCreateProject()}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-slate-500">
-                    <span>{selectedIds.size} seçili</span>
-                    <span>•</span>
-                    <span>{activeProject?.nodes?.length || 0} öğe</span>
+                <div className="flex items-center gap-3 px-3 py-1.5 bg-white/5 rounded-lg border border-white/5 text-xs" style={{ color: 'var(--text-muted)' }}>
+                    <span className={selectedIds.size > 0 ? "text-blue-400 font-medium" : ""}>{selectedIds.size} selected</span>
+                    <span className="text-slate-600">•</span>
+                    <span>{activeProject?.nodes?.length || 0} items</span>
                 </div>
             </header>
 
             <div className="flex-1 flex overflow-hidden">
                 {/* Sol Araç Çubuğu */}
-                <div className="w-12 border-r border-[#283339] flex flex-col items-center py-2 gap-1 shrink-0">
-                    <button onClick={() => { setMode("select"); setShapeToAdd(null); }} className={`p-2 rounded ${mode === "select" ? "bg-[#13a4ec] text-white" : "text-slate-400 hover:bg-[#283339]"}`} title="Seçim (V)">
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2z" /></svg>
-                    </button>
-                    <button onClick={() => { setMode("pan"); setShapeToAdd(null); }} className={`p-2 rounded ${mode === "pan" ? "bg-[#13a4ec] text-white" : "text-slate-400 hover:bg-[#283339]"}`} title="Kaydır (H)">
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11V8a4 4 0 118 0v3m-9 4h10a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z" /></svg>
-                    </button>
-                    <button onClick={() => { setMode("connect"); setShapeToAdd(null); }} className={`p-2 rounded ${mode === "connect" ? "bg-amber-500 text-white" : "text-slate-400 hover:bg-[#283339]"}`} title="Bağlantı">
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101" /></svg>
-                    </button>
+                {/* Sol Araç Çubuğu */}
+                <div className="w-14 border-r flex flex-col items-center py-4 gap-2 shrink-0 backdrop-blur-sm z-10" style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--frame-border)' }}>
+                    <div className="flex flex-col gap-1 p-1 bg-white/5 rounded-xl border border-white/5 mb-2">
+                        <button onClick={() => { setMode("select"); setShapeToAdd(null); }} className={`p-2.5 rounded-lg transition-all ${mode === "select" ? "bg-blue-500 text-white shadow-lg shadow-blue-500/25" : "text-slate-400 hover:text-white hover:bg-white/10"}`} title="Select (V)">
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2z" /></svg>
+                        </button>
+                        <button onClick={() => { setMode("pan"); setShapeToAdd(null); }} className={`p-2.5 rounded-lg transition-all ${mode === "pan" ? "bg-blue-500 text-white shadow-lg shadow-blue-500/25" : "text-slate-400 hover:text-white hover:bg-white/10"}`} title="Pan (H)">
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11V8a4 4 0 118 0v3m-9 4h10a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z" /></svg>
+                        </button>
+                        <button onClick={() => { setMode("connect"); setShapeToAdd(null); }} className={`p-2.5 rounded-lg transition-all ${mode === "connect" ? "bg-amber-500 text-white shadow-lg shadow-amber-500/25" : "text-slate-400 hover:text-white hover:bg-white/10"}`} title="Connection">
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101" /></svg>
+                        </button>
+                    </div>
 
-                    <div className="w-8 h-px bg-[#283339] my-1" />
+                    <div className="w-8 h-px bg-white/10 my-2" />
 
                     {/* Şekil butonları */}
-                    {shapeTypes.slice(0, 4).map(shape => (
-                        <button key={shape.id} onClick={() => { setShapeToAdd(shape.id); setMode("add"); }} className={`p-2 rounded text-lg ${shapeToAdd === shape.id ? "bg-green-500 text-white" : "text-slate-400 hover:bg-[#283339]"}`} title={shape.label}>{shape.icon}</button>
-                    ))}
-                    <button onClick={() => setShowShapeMenu(!showShapeMenu)} className="p-2 rounded text-slate-400 hover:bg-[#283339]" title="Diğer şekiller">⋯</button>
+                    <div className="flex flex-col gap-1 w-full px-2">
+                        {shapeTypes.slice(0, 4).map(shape => (
+                            <button key={shape.id} onClick={() => { setShapeToAdd(shape.id); setMode("add"); }} className={`p-2 rounded-lg text-lg transition-all ${shapeToAdd === shape.id ? "bg-green-500 text-white shadow-lg shadow-green-500/25" : "text-slate-400 hover:text-white hover:bg-white/10"}`} title={shape.label}>{shape.icon}</button>
+                        ))}
+                        <button onClick={() => setShowShapeMenu(!showShapeMenu)} className={`p-2 rounded-lg transition-all ${showShapeMenu ? "bg-white/10 text-white" : "text-slate-400 hover:text-white hover:bg-white/10"}`} title="Other shapes">⋯</button>
+                    </div>
 
                     {showShapeMenu && (
-                        <div className="absolute left-14 top-40 w-32 rounded-lg border border-[#283339] bg-[#1a252b] shadow-xl z-50 p-1">
-                            {shapeTypes.map(shape => (
-                                <button key={shape.id} onClick={() => { setShapeToAdd(shape.id); setMode("add"); setShowShapeMenu(false); }} className="w-full text-left px-2 py-1 rounded text-xs text-slate-300 hover:bg-[#283339] flex items-center gap-2">
-                                    <span>{shape.icon}</span> {shape.label}
-                                </button>
-                            ))}
+                        <div className="absolute left-16 top-48 w-40 rounded-xl border border-white/10 bg-slate-800/95 backdrop-blur-xl shadow-2xl z-50 p-1.5 animate-in fade-in slide-in-from-left-2 duration-200">
+                            <div className="text-[10px] font-semibold text-slate-500 px-2 py-1 uppercase tracking-wider mb-1">More Shapes</div>
+                            <div className="grid grid-cols-2 gap-1">
+                                {shapeTypes.map(shape => (
+                                    <button key={shape.id} onClick={() => { setShapeToAdd(shape.id); setMode("add"); setShowShapeMenu(false); }} className="w-full text-left px-2 py-2 rounded-lg text-xs text-slate-300 hover:bg-blue-500/20 hover:text-blue-400 flex flex-col items-center gap-1 transition-colors">
+                                        <span className="text-lg">{shape.icon}</span>
+                                        <span>{shape.label}</span>
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     )}
 
-                    <div className="w-8 h-px bg-[#283339] my-1" />
+                    <div className="w-8 h-px bg-white/10 my-2" />
 
-                    <button onClick={handleDeleteSelected} disabled={selectedIds.size === 0 && !selectedConnectionId} className={`p-2 rounded ${selectedIds.size > 0 || selectedConnectionId ? "text-rose-400 hover:bg-rose-500/20" : "text-slate-600"}`} title="Sil (Delete)">
+                    <button onClick={handleDeleteSelected} disabled={selectedIds.size === 0 && !selectedConnectionId} className={`p-2.5 rounded-lg transition-all ${selectedIds.size > 0 || selectedConnectionId ? "text-rose-400 hover:bg-rose-500/10 hover:text-rose-300" : "text-slate-700 cursor-not-allowed"}`} title="Delete (Delete)">
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                     </button>
                 </div>
@@ -716,28 +773,28 @@ const ProjectCanvas = () => {
                             {contextMenu.type === 'node' ? (
                                 <>
                                     <button onClick={handleCopy} className="w-full text-left px-3 py-1.5 text-xs text-slate-300 hover:bg-[#283339] flex items-center gap-2">
-                                        <span>⎘</span> Kopyala <span className="ml-auto text-slate-500">Ctrl+C</span>
+                                        <span>⎘</span> Copy <span className="ml-auto text-slate-500">Ctrl+C</span>
                                     </button>
                                     <button onClick={() => handlePaste()} disabled={clipboard.length === 0} className="w-full text-left px-3 py-1.5 text-xs text-slate-300 hover:bg-[#283339] flex items-center gap-2 disabled:opacity-40">
-                                        <span>⎙</span> Yapıştır <span className="ml-auto text-slate-500">Ctrl+V</span>
+                                        <span>⎙</span> Paste <span className="ml-auto text-slate-500">Ctrl+V</span>
                                     </button>
                                     <button onClick={handleDuplicate} className="w-full text-left px-3 py-1.5 text-xs text-slate-300 hover:bg-[#283339] flex items-center gap-2">
-                                        <span>⧉</span> Çoğalt <span className="ml-auto text-slate-500">Ctrl+D</span>
+                                        <span>⧉</span> Duplicate <span className="ml-auto text-slate-500">Ctrl+D</span>
                                     </button>
                                     <div className="border-t border-[#283339] my-1" />
                                     <button onClick={handleContextDelete} className="w-full text-left px-3 py-1.5 text-xs text-rose-400 hover:bg-rose-500/10 flex items-center gap-2">
-                                        <span>✕</span> Sil <span className="ml-auto text-slate-500">Delete</span>
+                                        <span>✕</span> Delete <span className="ml-auto text-slate-500">Delete</span>
                                     </button>
                                 </>
                             ) : (
                                 <>
                                     <button onClick={() => handlePaste({ x: contextMenu.canvasX, y: contextMenu.canvasY })} disabled={clipboard.length === 0} className="w-full text-left px-3 py-1.5 text-xs text-slate-300 hover:bg-[#283339] flex items-center gap-2 disabled:opacity-40">
-                                        <span>⎙</span> Buraya Yapıştır <span className="ml-auto text-slate-500">Ctrl+V</span>
+                                        <span>⎙</span> Paste Here <span className="ml-auto text-slate-500">Ctrl+V</span>
                                     </button>
                                     <div className="border-t border-[#283339] my-1" />
                                     {shapeTypes.slice(0, 4).map(shape => (
                                         <button key={shape.id} onClick={() => { handleAddShape(shape.id, { clientX: contextMenu.x, clientY: contextMenu.y }); closeContextMenu(); }} className="w-full text-left px-3 py-1.5 text-xs text-slate-300 hover:bg-[#283339] flex items-center gap-2">
-                                            <span>{shape.icon}</span> {shape.label} Ekle
+                                            <span>{shape.icon}</span> {shape.label} Add
                                         </button>
                                     ))}
                                 </>
@@ -746,60 +803,106 @@ const ProjectCanvas = () => {
                     )}
 
                     {/* Alt araç çubuğu */}
-                    <div className="absolute left-4 bottom-4 flex items-center gap-2 z-20">
-                        <div className="flex items-center gap-1 bg-[#1a252b] border border-[#283339] rounded-lg p-1">
-                            <button onClick={() => setZoom(z => Math.max(25, z - 10))} className="w-7 h-7 flex items-center justify-center text-slate-400 hover:bg-[#283339] rounded">−</button>
-                            <span className="text-xs w-10 text-center">{zoom}%</span>
-                            <button onClick={() => setZoom(z => Math.min(200, z + 10))} className="w-7 h-7 flex items-center justify-center text-slate-400 hover:bg-[#283339] rounded">+</button>
+                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 z-10 px-4 py-2 rounded-2xl">
+                        <div className="flex items-center gap-1 backdrop-blur-xl border rounded-xl p-1 shadow-xl" style={{ backgroundColor: 'var(--panel-bg)', borderColor: 'var(--panel-border)' }}>
+                            <button onClick={() => setZoom(z => Math.max(25, z - 10))} className="w-8 h-8 flex items-center justify-center text-slate-400 hover:bg-white/10 hover:text-white rounded-lg transition-colors">−</button>
+                            <span className="text-xs w-10 text-center font-medium text-slate-300">{zoom}%</span>
+                            <button onClick={() => setZoom(z => Math.min(200, z + 10))} className="w-8 h-8 flex items-center justify-center text-slate-400 hover:bg-white/10 hover:text-white rounded-lg transition-colors">+</button>
                         </div>
-                        {mode === "connect" && <div className="bg-amber-500/20 text-amber-400 text-xs px-3 py-1 rounded">{connectFromId ? "Hedef seçin" : "Kaynak seçin"}</div>}
-                        {shapeToAdd && <div className="bg-green-500/20 text-green-400 text-xs px-3 py-1 rounded">Kanvasa tıklayın: {shapeTypes.find(s => s.id === shapeToAdd)?.label}</div>}
+                        {mode === "connect" && <div className="bg-amber-500/90 backdrop-blur text-white text-xs px-3 py-1.5 rounded-lg border border-amber-400/20 shadow-lg font-medium">{connectFromId ? "Select target" : "Select source"}</div>}
+                        {shapeToAdd && <div className="bg-green-500/90 backdrop-blur text-white text-xs px-3 py-1.5 rounded-lg border border-green-400/20 shadow-lg font-medium">Click on canvas: {shapeTypes.find(s => s.id === shapeToAdd)?.label}</div>}
                     </div>
                 </div>
 
                 {/* Sağ Panel */}
-                <div className="w-72 border-l border-[#283339] flex flex-col overflow-hidden shrink-0">
-                    <div className="p-3 border-b border-[#283339]">
-                        <h3 className="text-sm font-medium">Özellikler</h3>
-                        <p className="text-[10px] text-slate-500">{selectedIds.size > 1 ? `${selectedIds.size} öğe seçili` : singleSelectedNode?.title || "Seçim yok"}</p>
+                <div className="w-80 border-l flex flex-col overflow-hidden shrink-0 backdrop-blur-sm" style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--frame-border)' }}>
+                    <div className="px-4 py-3 border-b border-white/5 bg-white/5">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-sm font-semibold text-white tracking-wide">Properties</h3>
+                            <button onClick={handleDeleteSelected} disabled={selectedIds.size === 0 && !selectedConnectionId} className="text-slate-400 hover:text-red-400 transition-colors disabled:opacity-0">
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                            </button>
+                        </div>
+                        <p className="text-[10px] text-slate-500 mt-0.5">{selectedIds.size > 1 ? `${selectedIds.size} items selected` : singleSelectedNode?.title || (selectedConnectionId ? "Connection selected" : "No selection")}</p>
                     </div>
 
-                    <div className="flex bg-[#101c22] mx-2 mt-2 rounded border border-[#283339]">
+                    <div className="flex bg-black/20 mx-3 mt-3 rounded-lg border border-white/5 p-1">
                         {["style", "sections"].map(tab => (
-                            <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 text-xs py-1.5 ${activeTab === tab ? "bg-[#283339] text-white" : "text-slate-400"}`}>{tab === "style" ? "Stil" : "Bölümler"}</button>
+                            <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 text-xs py-1.5 rounded-md transition-all font-medium ${activeTab === tab ? "bg-white/10 text-white shadow-sm" : "text-slate-500 hover:text-slate-300"}`}>{tab === "style" ? "Style" : "Sections"}</button>
                         ))}
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-3 space-y-3">
-                        {selectedIds.size === 0 && !selectedConnectionId && <p className="text-xs text-slate-500">Düzenlemek için öğe seçin</p>}
+                    <div className="flex-1 overflow-y-auto p-4 space-y-5 custom-scrollbar">
+                        {selectedIds.size === 0 && !selectedConnectionId && (
+                            <div className="flex flex-col items-center justify-center h-48 text-slate-500 border-2 border-dashed border-white/5 rounded-xl m-2 bg-white/5">
+                                <svg className="w-8 h-8 opacity-50 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 15l-2 5L9 9l11 4-5 2z" /></svg>
+                                <p className="text-xs">Select an item to edit</p>
+                            </div>
+                        )}
 
                         {selectedIds.size > 0 && activeTab === "style" && (
                             <>
                                 {singleSelectedNode && (
-                                    <>
-                                        <div><label className="text-[10px] text-slate-500 uppercase">Başlık</label><input value={singleSelectedNode.title} onChange={(e) => updateSelectedNodes({ title: e.target.value })} className="w-full mt-1 px-2 py-1 text-sm bg-[#1a252b] border border-[#283339] rounded text-white" /></div>
-                                        <div><label className="text-[10px] text-slate-500 uppercase">Açıklama</label><textarea value={singleSelectedNode.description || ""} onChange={(e) => updateSelectedNodes({ description: e.target.value })} rows={2} className="w-full mt-1 px-2 py-1 text-sm bg-[#1a252b] border border-[#283339] rounded text-white resize-none" /></div>
-                                    </>
+                                    <div className="space-y-3">
+                                        <div>
+                                            <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1 block">Title</label>
+                                            <input value={singleSelectedNode.title} onChange={(e) => updateSelectedNodes({ title: e.target.value })} className="w-full px-3 py-2 text-sm bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-blue-500/50 transition-colors" />
+                                        </div>
+                                        <div>
+                                            <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1 block">Description</label>
+                                            <textarea value={singleSelectedNode.description || ""} onChange={(e) => updateSelectedNodes({ description: e.target.value })} rows={3} className="w-full px-3 py-2 text-sm bg-white/5 border border-white/10 rounded-lg text-white resize-none focus:outline-none focus:border-blue-500/50 transition-colors" />
+                                        </div>
+                                    </div>
                                 )}
 
-                                <div className="grid grid-cols-2 gap-2">
-                                    <div><label className="text-[10px] text-slate-500 uppercase">Dolgu</label><input type="color" value={singleSelectedNode?.style?.fillColor || defaultNodeStyle.fillColor} onChange={(e) => updateNodeStyle({ fillColor: e.target.value })} className="w-full h-8 mt-1 rounded border border-[#283339] cursor-pointer" /></div>
-                                    <div><label className="text-[10px] text-slate-500 uppercase">Kenarlık</label><input type="color" value={singleSelectedNode?.style?.strokeColor || defaultNodeStyle.strokeColor} onChange={(e) => updateNodeStyle({ strokeColor: e.target.value })} className="w-full h-8 mt-1 rounded border border-[#283339] cursor-pointer" /></div>
-                                    <div><label className="text-[10px] text-slate-500 uppercase">Yazı Rengi</label><input type="color" value={singleSelectedNode?.style?.textColor || defaultNodeStyle.textColor} onChange={(e) => updateNodeStyle({ textColor: e.target.value })} className="w-full h-8 mt-1 rounded border border-[#283339] cursor-pointer" /></div>
-                                    <div><label className="text-[10px] text-slate-500 uppercase">Kenarlık Kalınlığı</label><input type="number" min="0" max="10" value={singleSelectedNode?.style?.strokeWidth || defaultNodeStyle.strokeWidth} onChange={(e) => updateNodeStyle({ strokeWidth: Number(e.target.value) })} className="w-full h-8 mt-1 px-2 bg-[#1a252b] border border-[#283339] rounded text-white text-xs" /></div>
+                                <div className="space-y-4">
+                                    <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-white/5 pb-1">Appearance</div>
+
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div><label className="text-[10px] text-slate-500 mb-1 block">Fill Color</label><div className="h-9 rounded-lg border border-white/10 overflow-hidden relative"><input type="color" value={singleSelectedNode?.style?.fillColor || defaultNodeStyle.fillColor} onChange={(e) => updateNodeStyle({ fillColor: e.target.value })} className="absolute inset-[-4px] w-[120%] h-[120%] cursor-pointer p-0 border-0" /></div></div>
+                                        <div><label className="text-[10px] text-slate-500 mb-1 block">Stroke Color</label><div className="h-9 rounded-lg border border-white/10 overflow-hidden relative"><input type="color" value={singleSelectedNode?.style?.strokeColor || defaultNodeStyle.strokeColor} onChange={(e) => updateNodeStyle({ strokeColor: e.target.value })} className="absolute inset-[-4px] w-[120%] h-[120%] cursor-pointer p-0 border-0" /></div></div>
+                                        <div><label className="text-[10px] text-slate-500 mb-1 block">Text Color</label><div className="h-9 rounded-lg border border-white/10 overflow-hidden relative"><input type="color" value={singleSelectedNode?.style?.textColor || defaultNodeStyle.textColor} onChange={(e) => updateNodeStyle({ textColor: e.target.value })} className="absolute inset-[-4px] w-[120%] h-[120%] cursor-pointer p-0 border-0" /></div></div>
+                                        <div>
+                                            <label className="text-[10px] text-slate-500 mb-1 block">Stroke Width</label>
+                                            <div className="relative">
+                                                <input type="number" min="0" max="10" value={singleSelectedNode?.style?.strokeWidth || defaultNodeStyle.strokeWidth} onChange={(e) => updateNodeStyle({ strokeWidth: Number(e.target.value) })} className="w-full h-9 pl-3 pr-2 bg-white/5 border border-white/10 rounded-lg text-white text-xs focus:outline-none focus:border-blue-500/50" />
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-2">
-                                    <div><label className="text-[10px] text-slate-500 uppercase">Genişlik</label><input type="number" value={singleSelectedNode?.width || 180} onChange={(e) => updateSelectedNodes({ width: Number(e.target.value) })} className="w-full h-8 mt-1 px-2 bg-[#1a252b] border border-[#283339] rounded text-white text-xs" /></div>
-                                    <div><label className="text-[10px] text-slate-500 uppercase">Yükseklik</label><input type="number" value={singleSelectedNode?.height || 100} onChange={(e) => updateSelectedNodes({ height: Number(e.target.value) })} className="w-full h-8 mt-1 px-2 bg-[#1a252b] border border-[#283339] rounded text-white text-xs" /></div>
+                                <div className="space-y-4">
+                                    <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-white/5 pb-1">Dimensions</div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="text-[10px] text-slate-500 mb-1 block">Width</label>
+                                            <div className="relative flex items-center">
+                                                <span className="absolute left-3 text-slate-500 text-xs">W</span>
+                                                <input type="number" value={singleSelectedNode?.width || 180} onChange={(e) => updateSelectedNodes({ width: Number(e.target.value) })} className="w-full h-9 pl-8 pr-2 bg-white/5 border border-white/10 rounded-lg text-white text-xs focus:outline-none focus:border-blue-500/50" />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="text-[10px] text-slate-500 mb-1 block">Height</label>
+                                            <div className="relative flex items-center">
+                                                <span className="absolute left-3 text-slate-500 text-xs">H</span>
+                                                <input type="number" value={singleSelectedNode?.height || 100} onChange={(e) => updateSelectedNodes({ height: Number(e.target.value) })} className="w-full h-9 pl-8 pr-2 bg-white/5 border border-white/10 rounded-lg text-white text-xs focus:outline-none focus:border-blue-500/50" />
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div><label className="text-[10px] text-slate-500 uppercase">Yazı Boyutu</label><input type="range" min="10" max="24" value={singleSelectedNode?.style?.fontSize || 14} onChange={(e) => updateNodeStyle({ fontSize: Number(e.target.value) })} className="w-full mt-1" /></div>
+                                <div>
+                                    <div className="flex justify-between mb-1"><label className="text-[10px] text-slate-500">Font Size</label> <span className="text-[10px] text-slate-400">{singleSelectedNode?.style?.fontSize || 14}px</span></div>
+                                    <input type="range" min="10" max="32" value={singleSelectedNode?.style?.fontSize || 14} onChange={(e) => updateNodeStyle({ fontSize: Number(e.target.value) })} className="w-full accent-blue-500 h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer" />
+                                </div>
 
-                                <div><label className="text-[10px] text-slate-500 uppercase">Opaklık</label><input type="range" min="20" max="100" value={(singleSelectedNode?.style?.opacity || 1) * 100} onChange={(e) => updateNodeStyle({ opacity: Number(e.target.value) / 100 })} className="w-full mt-1" /></div>
+                                <div>
+                                    <div className="flex justify-between mb-1"><label className="text-[10px] text-slate-500">Opacity</label> <span className="text-[10px] text-slate-400">{Math.round((singleSelectedNode?.style?.opacity || 1) * 100)}%</span></div>
+                                    <input type="range" min="20" max="100" value={(singleSelectedNode?.style?.opacity || 1) * 100} onChange={(e) => updateNodeStyle({ opacity: Number(e.target.value) / 100 })} className="w-full accent-blue-500 h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer" />
+                                </div>
 
                                 {singleSelectedNode && (
-                                    <div><label className="text-[10px] text-slate-500 uppercase">Şekil</label>
+                                    <div><label className="text-[10px] text-slate-500 uppercase">Shape</label>
                                         <select value={singleSelectedNode.shape} onChange={(e) => updateSelectedNodes({ shape: e.target.value })} className="w-full mt-1 px-2 py-1.5 bg-[#1a252b] border border-[#283339] rounded text-white text-xs">
                                             {shapeTypes.map(s => <option key={s.id} value={s.id}>{s.icon} {s.label}</option>)}
                                         </select>
@@ -812,7 +915,7 @@ const ProjectCanvas = () => {
                             <>
                                 {/* Bölüm modu toggle */}
                                 <div className="flex items-center justify-between p-2 bg-[#1a252b] rounded border border-[#283339]">
-                                    <span className="text-xs text-slate-300">Bölümlü Görünüm</span>
+                                    <span className="text-xs text-slate-300">Section View</span>
                                     <button onClick={toggleSectionMode} className={`w-10 h-5 rounded-full relative transition-colors ${singleSelectedNode.hasSections ? 'bg-[#13a4ec]' : 'bg-[#283339]'}`}>
                                         <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${singleSelectedNode.hasSections ? 'left-5' : 'left-0.5'}`} />
                                     </button>
@@ -820,34 +923,34 @@ const ProjectCanvas = () => {
 
                                 {singleSelectedNode.hasSections && (
                                     <>
-                                        <button onClick={addSection} className="w-full py-1.5 text-xs bg-[#13a4ec] text-white rounded hover:bg-[#13a4ec]/80">+ Bölüm Ekle</button>
+                                        <button onClick={addSection} className="w-full py-1.5 text-xs bg-[#13a4ec] text-white rounded hover:bg-[#13a4ec]/80">+ Add Section</button>
 
                                         <div className="space-y-2">
                                             {singleSelectedNode.sections?.map((sec, idx) => (
                                                 <div key={sec.id} className="p-2 bg-[#1a252b] rounded border border-[#283339] space-y-2">
                                                     {/* Başlık ve kontroller */}
                                                     <div className="flex items-center gap-1">
-                                                        <input value={sec.title} onChange={(e) => updateSection(sec.id, { title: e.target.value })} placeholder="Başlık" className="flex-1 px-2 py-1 text-xs bg-[#101c22] border border-[#283339] rounded text-white" />
+                                                        <input value={sec.title} onChange={(e) => updateSection(sec.id, { title: e.target.value })} placeholder="Title" className="flex-1 px-2 py-1 text-xs bg-[#101c22] border border-[#283339] rounded text-white" />
                                                         <button onClick={() => moveSectionUp(sec.id)} disabled={idx === 0} className="p-1 text-slate-400 hover:text-white disabled:opacity-30">↑</button>
                                                         <button onClick={() => moveSectionDown(sec.id)} disabled={idx === singleSelectedNode.sections.length - 1} className="p-1 text-slate-400 hover:text-white disabled:opacity-30">↓</button>
                                                         <button onClick={() => removeSection(sec.id)} className="p-1 text-rose-400 hover:text-rose-300">✕</button>
                                                     </div>
 
                                                     {/* İçerik */}
-                                                    <input value={sec.content || ""} onChange={(e) => updateSection(sec.id, { content: e.target.value })} placeholder="İçerik (opsiyonel)" className="w-full px-2 py-1 text-[10px] bg-[#101c22] border border-[#283339] rounded text-white" />
+                                                    <input value={sec.content || ""} onChange={(e) => updateSection(sec.id, { content: e.target.value })} placeholder="Content (optional)" className="w-full px-2 py-1 text-[10px] bg-[#101c22] border border-[#283339] rounded text-white" />
 
                                                     {/* Stiller */}
                                                     <div className="flex gap-2">
                                                         <div className="flex-1">
-                                                            <label className="text-[9px] text-slate-500">Arka Plan</label>
+                                                            <label className="text-[9px] text-slate-500">Background</label>
                                                             <input type="color" value={sec.bgColor || "#283339"} onChange={(e) => updateSection(sec.id, { bgColor: e.target.value })} className="w-full h-6 rounded border border-[#283339] cursor-pointer" />
                                                         </div>
                                                         <div className="flex-1">
-                                                            <label className="text-[9px] text-slate-500">Yazı</label>
+                                                            <label className="text-[9px] text-slate-500">Text</label>
                                                             <input type="color" value={sec.textColor || "#ffffff"} onChange={(e) => updateSection(sec.id, { textColor: e.target.value })} className="w-full h-6 rounded border border-[#283339] cursor-pointer" />
                                                         </div>
                                                         <div className="flex-1">
-                                                            <label className="text-[9px] text-slate-500">Yükseklik</label>
+                                                            <label className="text-[9px] text-slate-500">Height</label>
                                                             <input type="number" min="24" max="80" value={sec.height || 32} onChange={(e) => updateSection(sec.id, { height: Number(e.target.value) })} className="w-full h-6 px-1 text-[10px] bg-[#101c22] border border-[#283339] rounded text-white" />
                                                         </div>
                                                     </div>
@@ -856,21 +959,21 @@ const ProjectCanvas = () => {
                                         </div>
 
                                         {(!singleSelectedNode.sections || singleSelectedNode.sections.length === 0) && (
-                                            <p className="text-xs text-slate-500 text-center py-2">Henüz bölüm yok</p>
+                                            <p className="text-xs text-slate-500 text-center py-2">No sections yet</p>
                                         )}
                                     </>
                                 )}
 
                                 {!singleSelectedNode.hasSections && (
-                                    <p className="text-xs text-slate-500">Bölümlü görünümü açarak öğeyi alt bölümlere ayırabilirsiniz.</p>
+                                    <p className="text-xs text-slate-500">Enable section view to split item into subsections.</p>
                                 )}
                             </>
                         )}
 
                         {selectedConnectionId && activeProject?.connections && (
                             <div className="space-y-3">
-                                <div><label className="text-[10px] text-slate-500 uppercase">Bağlantı Etiketi</label><input value={activeProject.connections.find(c => c.id === selectedConnectionId)?.label || ""} onChange={(e) => updateProject(p => ({ ...p, connections: p.connections.map(c => c.id === selectedConnectionId ? { ...c, label: e.target.value } : c) }))} className="w-full mt-1 px-2 py-1 text-sm bg-[#1a252b] border border-[#283339] rounded text-white" /></div>
-                                <div className="flex items-center gap-2"><input type="checkbox" checked={activeProject.connections.find(c => c.id === selectedConnectionId)?.style?.dashed || false} onChange={(e) => updateProject(p => ({ ...p, connections: p.connections.map(c => c.id === selectedConnectionId ? { ...c, style: { ...c.style, dashed: e.target.checked } } : c) }))} className="rounded border-[#283339]" /><span className="text-xs text-slate-400">Kesik çizgi</span></div>
+                                <div><label className="text-[10px] text-slate-500 uppercase">Connection Label</label><input value={activeProject.connections.find(c => c.id === selectedConnectionId)?.label || ""} onChange={(e) => updateProject(p => ({ ...p, connections: p.connections.map(c => c.id === selectedConnectionId ? { ...c, label: e.target.value } : c) }))} className="w-full mt-1 px-2 py-1 text-sm bg-[#1a252b] border border-[#283339] rounded text-white" /></div>
+                                <div className="flex items-center gap-2"><input type="checkbox" checked={activeProject.connections.find(c => c.id === selectedConnectionId)?.style?.dashed || false} onChange={(e) => updateProject(p => ({ ...p, connections: p.connections.map(c => c.id === selectedConnectionId ? { ...c, style: { ...c.style, dashed: e.target.checked } } : c) }))} className="rounded border-[#283339]" /><span className="text-xs text-slate-400">Dashed line</span></div>
                             </div>
                         )}
                     </div>
@@ -878,7 +981,7 @@ const ProjectCanvas = () => {
                     {/* Katmanlar */}
                     <div className="h-48 border-t border-[#283339] flex flex-col shrink-0">
                         <div className="p-2 border-b border-[#283339] text-xs font-medium flex justify-between items-center">
-                            <span>Katmanlar ({activeProject?.nodes?.length || 0})</span>
+                            <span>Layers ({activeProject?.nodes?.length || 0})</span>
                         </div>
                         <div className="flex-1 overflow-y-auto p-1">
                             {activeProject?.nodes?.map(node => (

@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 
-const DAYS = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const MONTHS = [
-  'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
-  'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
-const DatePicker = ({ value, onChange, placeholder = 'Tarih seçin' }) => {
+const DatePicker = ({ value, onChange, placeholder = 'Select date' }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const containerRef = useRef(null);
@@ -36,12 +36,12 @@ const DatePicker = ({ value, onChange, placeholder = 'Tarih seçin' }) => {
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const daysInMonth = lastDay.getDate();
-    
+
     let startingDay = firstDay.getDay() - 1;
     if (startingDay < 0) startingDay = 6;
 
     const days = [];
-    
+
     const prevMonthLastDay = new Date(year, month, 0).getDate();
     for (let i = startingDay - 1; i >= 0; i--) {
       days.push({
@@ -98,15 +98,15 @@ const DatePicker = ({ value, onChange, placeholder = 'Tarih seçin' }) => {
   const isToday = (date) => {
     const today = new Date();
     return date.getDate() === today.getDate() &&
-           date.getMonth() === today.getMonth() &&
-           date.getFullYear() === today.getFullYear();
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear();
   };
 
   const isSelected = (date) => {
     if (!selectedDate) return false;
     return date.getDate() === selectedDate.getDate() &&
-           date.getMonth() === selectedDate.getMonth() &&
-           date.getFullYear() === selectedDate.getFullYear();
+      date.getMonth() === selectedDate.getMonth() &&
+      date.getFullYear() === selectedDate.getFullYear();
   };
 
   const formatDisplayDate = (dateStr) => {
@@ -122,13 +122,14 @@ const DatePicker = ({ value, onChange, placeholder = 'Tarih seçin' }) => {
       {/* Input Field */}
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white cursor-pointer flex items-center justify-between hover:border-slate-500 transition-colors"
+        className="w-full px-4 py-2.5 border rounded-xl cursor-pointer flex items-center justify-between transition-colors"
+        style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--panel-border)' }}
       >
         <div className="flex items-center gap-3 min-w-0">
-          <svg className="w-5 h-5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--text-muted)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
-          <span className={`truncate ${value ? 'text-white' : 'text-slate-400'}`}>
+          <span className="truncate" style={{ color: value ? 'var(--text-main)' : 'var(--text-muted)' }}>
             {value ? formatDisplayDate(value) : placeholder}
           </span>
         </div>
@@ -137,14 +138,15 @@ const DatePicker = ({ value, onChange, placeholder = 'Tarih seçin' }) => {
             <button
               type="button"
               onClick={handleClear}
-              className="p-1 hover:bg-slate-600 rounded-full transition-colors"
+              className="p-1 hover:bg-white/10 rounded-full transition-colors"
+              style={{ color: 'var(--text-muted)' }}
             >
-              <svg className="w-4 h-4 text-slate-400 hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-4 h-4 hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           )}
-          <svg className={`w-4 h-4 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} style={{ color: 'var(--text-muted)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </div>
@@ -152,36 +154,38 @@ const DatePicker = ({ value, onChange, placeholder = 'Tarih seçin' }) => {
 
       {/* Calendar Dropdown */}
       {isOpen && (
-        <div className="absolute z-[60] top-full mt-2 left-0 w-72 bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden animate-slide-up">
+        <div className="absolute z-[60] top-full mt-2 left-0 w-72 rounded-2xl shadow-2xl overflow-hidden animate-slide-up border" style={{ backgroundColor: 'var(--panel-bg)', borderColor: 'var(--panel-border)' }}>
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 bg-slate-700/50">
+          <div className="flex items-center justify-between px-4 py-3" style={{ backgroundColor: 'var(--frame-bg)' }}>
             <button
               type="button"
               onClick={handlePrevMonth}
-              className="p-2 hover:bg-slate-600 rounded-lg transition-colors"
+              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+              style={{ color: 'var(--text-muted)' }}
             >
-              <svg className="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <div className="text-white font-semibold">
+            <div className="font-semibold" style={{ color: 'var(--text-main)' }}>
               {MONTHS[currentMonth.getMonth()]} {currentMonth.getFullYear()}
             </div>
             <button
               type="button"
               onClick={handleNextMonth}
-              className="p-2 hover:bg-slate-600 rounded-lg transition-colors"
+              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+              style={{ color: 'var(--text-muted)' }}
             >
-              <svg className="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
           </div>
 
           {/* Day Headers */}
-          <div className="grid grid-cols-7 gap-1 px-3 py-2 border-b border-slate-700">
+          <div className="grid grid-cols-7 gap-1 px-3 py-2 border-b" style={{ borderColor: 'var(--panel-border)' }}>
             {DAYS.map((day) => (
-              <div key={day} className="text-center text-xs font-medium text-slate-400 py-1">
+              <div key={day} className="text-center text-xs font-medium py-1" style={{ color: 'var(--text-muted)' }}>
                 {day}
               </div>
             ))}
@@ -197,10 +201,11 @@ const DatePicker = ({ value, onChange, placeholder = 'Tarih seçin' }) => {
                 className={`
                   w-8 h-8 rounded-lg text-sm font-medium transition-all
                   flex items-center justify-center
-                  ${!dayInfo.isCurrentMonth ? 'text-slate-600' : 'text-slate-300 hover:bg-slate-700'}
+                  ${!dayInfo.isCurrentMonth ? 'opacity-30' : 'hover:bg-white/5'}
                   ${isToday(dayInfo.date) && !isSelected(dayInfo.date) ? 'ring-1 ring-primary-500 text-primary-400' : ''}
                   ${isSelected(dayInfo.date) ? 'bg-primary-500 text-white hover:bg-primary-600' : ''}
                 `}
+                style={{ color: isSelected(dayInfo.date) ? 'white' : 'var(--text-main)' }}
               >
                 {dayInfo.day}
               </button>
@@ -212,9 +217,10 @@ const DatePicker = ({ value, onChange, placeholder = 'Tarih seçin' }) => {
             <button
               type="button"
               onClick={() => handleDateSelect(new Date())}
-              className="flex-1 px-3 py-2 text-xs font-medium text-slate-300 bg-slate-700/50 hover:bg-slate-700 rounded-lg transition-colors"
+              className="flex-1 px-3 py-2 text-xs font-medium hover:text-white rounded-lg transition-colors"
+              style={{ backgroundColor: 'var(--frame-bg)', color: 'var(--text-muted)' }}
             >
-              Bugün
+              Today
             </button>
             <button
               type="button"
@@ -223,9 +229,10 @@ const DatePicker = ({ value, onChange, placeholder = 'Tarih seçin' }) => {
                 tomorrow.setDate(tomorrow.getDate() + 1);
                 handleDateSelect(tomorrow);
               }}
-              className="flex-1 px-3 py-2 text-xs font-medium text-slate-300 bg-slate-700/50 hover:bg-slate-700 rounded-lg transition-colors"
+              className="flex-1 px-3 py-2 text-xs font-medium hover:text-white rounded-lg transition-colors"
+              style={{ backgroundColor: 'var(--frame-bg)', color: 'var(--text-muted)' }}
             >
-              Yarın
+              Tomorrow
             </button>
             <button
               type="button"
@@ -234,9 +241,10 @@ const DatePicker = ({ value, onChange, placeholder = 'Tarih seçin' }) => {
                 nextWeek.setDate(nextWeek.getDate() + 7);
                 handleDateSelect(nextWeek);
               }}
-              className="flex-1 px-3 py-2 text-xs font-medium text-slate-300 bg-slate-700/50 hover:bg-slate-700 rounded-lg transition-colors"
+              className="flex-1 px-3 py-2 text-xs font-medium hover:text-white rounded-lg transition-colors"
+              style={{ backgroundColor: 'var(--frame-bg)', color: 'var(--text-muted)' }}
             >
-              1 Hafta
+              1 Week
             </button>
           </div>
         </div>

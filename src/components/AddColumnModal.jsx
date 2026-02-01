@@ -30,18 +30,19 @@ const AddColumnModal = ({ isOpen, onClose, onAdd }) => {
   };
 
   return (
-    <div 
+    <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
       onClick={handleOverlayClick}
     >
-      <div className="w-full max-w-md bg-slate-800 rounded-2xl shadow-2xl border border-slate-700 overflow-hidden animate-slide-up">
+      <div className="w-full max-w-md rounded-2xl shadow-2xl border overflow-hidden animate-slide-up" style={{ backgroundColor: 'var(--panel-bg)', borderColor: 'var(--panel-border)' }}>
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700">
-          <h2 className="text-lg font-semibold text-white">Yeni Kolon Ekle</h2>
+        <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: 'var(--panel-border)' }}>
+          <h2 className="text-lg font-semibold" style={{ color: 'var(--text-main)' }}>Add New Column</h2>
           <button
             type="button"
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
+            className="p-2 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+            style={{ color: 'var(--text-muted)' }}
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -52,14 +53,15 @@ const AddColumnModal = ({ isOpen, onClose, onAdd }) => {
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6">
           <div className="mb-6">
-            <label className="block text-sm font-medium text-slate-300 mb-2">Kolon Adı</label>
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-muted)' }}>Column Name</label>
             <input
               ref={inputRef}
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="örn: In Review, Testing, QA..."
-              className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-primary-500 transition-colors"
+              placeholder="e.g., In Progress"
+              className="w-full px-4 py-3 border rounded-xl placeholder-slate-400 focus:outline-none focus:border-primary-500 transition-colors"
+              style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--panel-border)', color: 'var(--text-main)' }}
             />
           </div>
 
@@ -67,15 +69,16 @@ const AddColumnModal = ({ isOpen, onClose, onAdd }) => {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-5 py-2.5 text-slate-400 hover:text-white bg-slate-700/50 hover:bg-slate-700 rounded-xl font-medium transition-colors"
+              className="flex-1 px-5 py-2.5 hover:text-white hover:bg-white/10 rounded-xl font-medium transition-colors"
+              style={{ color: 'var(--text-muted)' }}
             >
-              İptal
+              Cancel
             </button>
             <button
               type="submit"
               className="flex-1 px-5 py-2.5 bg-primary-500 hover:bg-primary-600 text-white rounded-xl font-medium transition-colors"
             >
-              Kolon Ekle
+              Add Column
             </button>
           </div>
         </form>

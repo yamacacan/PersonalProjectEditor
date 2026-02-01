@@ -120,24 +120,28 @@ const Column = ({
       onDragEnd={isReorderMode ? handleColumnDragEnd : undefined}
       className={`
         flex flex-col w-80 flex-shrink-0 rounded-2xl
-        bg-slate-800/50 backdrop-blur-sm border border-slate-700/50
+        backdrop-blur-sm border
         transition-all duration-300 ease-out
-        ${isDragOver ? 'ring-2 ring-primary-500 ring-opacity-50 bg-slate-800/70 scale-[1.02]' : ''}
+        ${isDragOver ? 'ring-2 ring-primary-500 ring-opacity-50 scale-[1.02]' : ''}
         ${isColumnDragOver ? 'ring-2 ring-blue-500 ring-opacity-50 scale-[1.02]' : ''}
         ${isReorderMode && onColumnReorder ? 'cursor-move' : ''}
       `}
+      style={{
+        backgroundColor: isDragOver ? 'var(--frame-bg)' : 'var(--panel-bg)',
+        borderColor: 'var(--panel-border)'
+      }}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
       {/* Column Header */}
-      <div className="flex items-center justify-between p-4 border-b border-slate-700/50">
+      <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: 'var(--panel-border)' }}>
         <div className="flex items-center gap-3 flex-1 min-w-0">
           {/* Drag Handle */}
           {isReorderMode && onColumnReorder && (
             <div
               className="text-slate-500 hover:text-slate-300 cursor-grab active:cursor-grabbing transition-colors animate-fade-in"
-              title="Kolonu taşımak için sürükleyin"
+              title="Drag to move column"
             >
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M7 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 2zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 14zm6-8a2 2 0 1 0-.001-4.001A2 2 0 0 0 13 6zm0 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 14z"></path>
@@ -156,20 +160,22 @@ const Column = ({
                 if (e.key === 'Enter') handleTitleSave();
                 if (e.key === 'Escape') handleTitleCancel();
               }}
-              className="flex-1 min-w-0 px-2 py-1 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm font-semibold focus:outline-none focus:border-primary-500"
+              className="flex-1 min-w-0 px-2 py-1 rounded-lg text-sm font-semibold focus:outline-none focus:border-primary-500"
+              style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--panel-border)', color: 'var(--text-main)' }}
               autoFocus
             />
           ) : (
             <h2
-              className="font-semibold text-white truncate cursor-pointer hover:text-primary-400 transition-colors"
+              className="font-semibold truncate cursor-pointer hover:text-primary-400 transition-colors"
+              style={{ color: 'var(--text-main)' }}
               onDoubleClick={handleTitleDoubleClick}
-              title="Düzenlemek için çift tıklayın"
+              title="Double-click to edit"
             >
               {title}
             </h2>
           )}
 
-          <span className="px-2 py-0.5 text-xs font-medium text-slate-400 bg-slate-700/50 rounded-full flex-shrink-0">
+          <span className="px-2 py-0.5 text-xs font-medium rounded-full flex-shrink-0" style={{ backgroundColor: 'var(--frame-bg)', color: 'var(--text-muted)' }}>
             {cards.length}
           </span>
         </div>
@@ -179,7 +185,7 @@ const Column = ({
               <button
                 onClick={handleTitleDoubleClick}
                 className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700/50 rounded-lg transition-colors"
-                title="Kolonu Düzenle"
+                title="Edit Column"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -189,7 +195,7 @@ const Column = ({
             <button
               onClick={() => setIsAddingCard(true)}
               className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700/50 rounded-lg transition-colors"
-              title="Kart Ekle"
+              title="Add Card"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -199,7 +205,7 @@ const Column = ({
               <button
                 onClick={() => onDeleteColumn(columnId)}
                 className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                title="Kolonu Sil"
+                title="Delete Column"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -209,7 +215,7 @@ const Column = ({
           </div>
         )}
         {isReorderMode && (
-          <div className="text-xs text-slate-500 italic px-2">Sürükle & Bırak</div>
+          <div className="text-xs italic px-2" style={{ color: 'var(--text-muted)' }}>Drag & Drop</div>
         )}
       </div>
 
@@ -225,16 +231,16 @@ const Column = ({
           />
         ))}
 
-        {/* Quick Add Card Form */}
         {isAddingCard && (
           <div className="animate-slide-up">
-            <div className="bg-slate-700/50 rounded-xl p-3 border border-slate-600/50">
+            <div className="rounded-xl p-3 border" style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--panel-border)' }}>
               <input
                 type="text"
                 value={newCardTitle}
                 onChange={(e) => setNewCardTitle(e.target.value)}
-                placeholder="Kart başlığı yazın..."
-                className="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 text-sm focus:outline-none focus:border-primary-500 transition-colors"
+                placeholder="Enter card title..."
+                className="w-full px-3 py-2 border rounded-lg placeholder-slate-400 text-sm focus:outline-none focus:border-primary-500 transition-colors"
+                style={{ backgroundColor: 'var(--panel-bg)', borderColor: 'var(--panel-border)', color: 'var(--text-main)' }}
                 autoFocus
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
@@ -249,13 +255,14 @@ const Column = ({
                   onClick={handleAddCard}
                   className="flex-1 px-3 py-1.5 bg-primary-500 hover:bg-primary-600 text-white text-sm font-medium rounded-lg transition-colors"
                 >
-                  Ekle
+                  Add
                 </button>
                 <button
                   onClick={handleCancelAdd}
-                  className="px-3 py-1.5 text-slate-400 hover:text-white hover:bg-slate-600/50 text-sm font-medium rounded-lg transition-colors"
+                  className="px-3 py-1.5 hover:text-white rounded-lg transition-colors"
+                  style={{ color: 'var(--text-muted)' }}
                 >
-                  İptal
+                  Cancel
                 </button>
               </div>
             </div>
@@ -267,12 +274,13 @@ const Column = ({
       {!isAddingCard && !isReorderMode && (
         <button
           onClick={() => setIsAddingCard(true)}
-          className="m-3 mt-0 flex items-center justify-center gap-2 px-4 py-2.5 text-slate-400 hover:text-white bg-slate-700/30 hover:bg-slate-700/50 rounded-xl border border-dashed border-slate-600/50 hover:border-slate-500 transition-all duration-200"
+          className="m-3 mt-0 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-dashed hover:border-slate-500 transition-all duration-200"
+          style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--panel-border)', color: 'var(--text-muted)' }}
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          <span className="text-sm font-medium">Kart Ekle</span>
+          <span className="text-sm font-medium">Add Card</span>
         </button>
       )}
     </div>

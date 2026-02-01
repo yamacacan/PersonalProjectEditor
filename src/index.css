@@ -12,6 +12,8 @@
   --accent-600: #4f46e5;
   --canvas-bg: #0f172a;
   --canvas-dot: #334155;
+  --text-main: #ffffff;
+  --text-muted: #94a3b8;
 }
 
 @layer base {
@@ -21,6 +23,7 @@
 
   body {
     @apply font-sans antialiased;
+    color: var(--text-main);
   }
 
   ::-webkit-scrollbar {
@@ -42,7 +45,14 @@
   }
 
   .btn-secondary {
-    @apply px-4 py-2 bg-surface-200 text-slate-700 rounded-lg font-medium hover:bg-surface-300 active:bg-surface-400 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-surface-400 focus:ring-offset-2;
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2;
+    background-color: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    color: var(--text-main);
+  }
+
+  .btn-secondary:hover {
+    @apply bg-white/10;
   }
 
   .btn-danger {
@@ -54,15 +64,28 @@
   }
 
   .input-field {
-    @apply w-full px-3 py-2.5 bg-white border-2 border-surface-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:border-primary-500 focus:ring-0 transition-colors duration-200;
+    @apply w-full px-3 py-2.5 rounded-lg transition-colors duration-200;
+    background-color: var(--panel-bg);
+    border: 2px solid var(--panel-border);
+    color: var(--text-main);
+  }
+
+  .input-field::placeholder {
+    color: var(--text-muted);
   }
 
   .textarea-field {
-    @apply w-full px-3 py-2.5 bg-white border-2 border-surface-200 rounded-lg text-slate-800 placeholder-slate-400 resize-none focus:outline-none focus:border-primary-500 focus:ring-0 transition-colors duration-200;
+    @apply w-full px-3 py-2.5 rounded-lg resize-none focus:outline-none focus:border-primary-500 focus:ring-0 transition-colors duration-200;
+    background-color: var(--panel-bg);
+    border: 2px solid var(--panel-border);
+    color: var(--text-main);
   }
 
   .select-field {
-    @apply w-full px-3 py-2.5 bg-white border-2 border-surface-200 rounded-lg text-slate-800 focus:outline-none focus:border-primary-500 focus:ring-0 transition-colors duration-200 cursor-pointer;
+    @apply w-full px-3 py-2.5 rounded-lg focus:outline-none focus:border-primary-500 focus:ring-0 transition-colors duration-200 cursor-pointer;
+    background-color: var(--panel-bg);
+    border: 2px solid var(--panel-border);
+    color: var(--text-main);
   }
 
   .canvas-grid {
@@ -118,7 +141,8 @@
 }
 
 .note-editor-container .ql-editor.ql-blank::before {
-  @apply text-slate-500 not-italic !important;
+  @apply not-italic !important;
+  color: var(--text-muted) !important;
 }
 
 /* Custom Title Bar Styles */
@@ -149,7 +173,7 @@
 }
 
 .window-control:active {
-  @apply bg-slate-600/60;
+  @apply bg-white/10;
 }
 
 /* Sidebar Styles */
@@ -179,11 +203,12 @@
 }
 
 .sidebar-logo-text {
-  @apply text-base font-bold text-white whitespace-nowrap transition-all duration-300;
+  @apply text-base font-bold whitespace-nowrap transition-all duration-300;
+  color: var(--text-main);
 }
 
 .sidebar-divider {
-  @apply h-px mx-3 bg-gradient-to-r from-transparent via-slate-700/50 to-transparent;
+  @apply h-px mx-3 bg-gradient-to-r from-transparent via-white/10 to-transparent;
 }
 
 .sidebar-nav {
@@ -191,11 +216,13 @@
 }
 
 .sidebar-item {
-  @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 transition-all duration-200 cursor-pointer overflow-hidden relative;
+  @apply flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 cursor-pointer overflow-hidden relative;
+  color: var(--text-muted);
 }
 
 .sidebar-item:hover {
-  @apply bg-slate-800/60 text-slate-200;
+  @apply bg-white/5;
+  color: var(--text-main);
 }
 
 .sidebar-item-active {
@@ -219,11 +246,11 @@
 }
 
 .sidebar-item-muted {
-  @apply text-slate-500;
+  @apply opacity-50;
 }
 
 .sidebar-item-muted:hover {
-  @apply text-slate-400;
+  @apply opacity-100;
 }
 
 .sidebar-bottom {
@@ -248,20 +275,30 @@
 
 /* Settings Page Styles */
 .settings-section {
-  @apply bg-slate-800/40 rounded-2xl p-6 mb-6 border border-slate-700/50;
+  @apply rounded-2xl p-6 mb-6 border;
+  background-color: var(--panel-bg);
+  border-color: var(--panel-border);
 }
 
 .settings-section-title {
-  @apply flex items-center gap-2 text-lg font-semibold text-white;
+  @apply flex items-center gap-2 text-lg font-semibold;
+  color: var(--text-main);
 }
 
 .settings-section-desc {
-  @apply text-sm text-slate-400 mt-1;
+  @apply text-sm mt-1;
+  color: var(--text-muted);
 }
 
 /* Theme Cards */
 .theme-card {
-  @apply relative flex flex-col items-center p-4 rounded-xl bg-slate-800/60 border-2 border-transparent hover:border-slate-600 transition-all duration-200 cursor-pointer;
+  @apply relative flex flex-col items-center p-4 rounded-xl border-2 transition-all duration-200 cursor-pointer;
+  background-color: var(--frame-bg);
+  border-color: transparent;
+}
+
+.theme-card:hover {
+  border-color: var(--panel-border);
 }
 
 .theme-card-active {
@@ -277,7 +314,8 @@
 }
 
 .theme-card-name {
-  @apply text-sm font-medium text-slate-300;
+  @apply text-sm font-medium;
+  color: var(--text-muted);
 }
 
 .theme-card-check {
@@ -286,7 +324,13 @@
 
 /* Accent Color Buttons */
 .accent-color-btn {
-  @apply relative p-1.5 rounded-xl bg-slate-800/60 border-2 border-transparent hover:border-slate-600 transition-all duration-200 cursor-pointer;
+  @apply relative p-1.5 rounded-xl border-2 transition-all duration-200 cursor-pointer;
+  background-color: var(--frame-bg);
+  border-color: transparent;
+}
+
+.accent-color-btn:hover {
+  border-color: var(--panel-border);
 }
 
 .accent-color-btn-active {
@@ -299,14 +343,78 @@
 
 /* Themed Modal Styles */
 .themed-modal {
-  background-color: var(--panel-bg);
-  border-color: var(--panel-border);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .themed-modal-overlay {
-  @apply fixed inset-0 z-50 flex items-center justify-center p-4;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
+  @apply fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-sm;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.themed-modal {
+  @apply relative w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden;
+  background-color: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+}
+
+/* React Quill Theme Overrides */
+.note-editor-container .ql-toolbar.ql-snow {
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-bottom: 1px solid var(--panel-border) !important;
+  background-color: var(--frame-bg) !important;
+  @apply px-4 py-2;
+}
+
+.note-editor-container .ql-container.ql-snow {
+  border: none !important;
+  @apply text-base;
+}
+
+.note-editor-container .ql-editor {
+  color: var(--text-main) !important;
+  @apply p-6;
+}
+
+.note-editor-container .ql-editor.ql-blank::before {
+  color: var(--text-muted) !important;
+  @apply left-6;
+}
+
+.note-editor-container .ql-snow .ql-stroke {
+  stroke: var(--text-muted) !important;
+}
+
+.note-editor-container .ql-snow .ql-fill {
+  fill: var(--text-muted) !important;
+}
+
+.note-editor-container .ql-snow .ql-picker {
+  color: var(--text-muted) !important;
+}
+
+.note-editor-container .ql-snow .ql-picker-options {
+  background-color: var(--panel-bg) !important;
+  border-color: var(--panel-border) !important;
+}
+
+/* Custom Scrollbar for Quill */
+.note-editor-container .ql-editor::-webkit-scrollbar {
+  width: 6px;
+}
+
+.note-editor-container .ql-editor::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.note-editor-container .ql-editor::-webkit-scrollbar-thumb {
+  background: var(--panel-border);
+  border-radius: 10px;
+}
+
+.note-editor-container .ql-editor::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-500);
 }
 
 /* Themed Canvas Styles */

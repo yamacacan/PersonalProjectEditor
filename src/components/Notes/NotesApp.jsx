@@ -5,7 +5,7 @@ import NoteEditor from './NoteEditor';
 import DeleteAlertModal from '../DeleteAlertModal';
 import { loadNotesData, saveNotesData } from '../../utils/storage';
 
-// Dosya türleri için ikonlar ve renkler
+// Icons and colors for file types
 const FILE_TYPES = {
   pdf: { icon: '📄', color: 'text-red-400', bg: 'bg-red-500/20' },
   doc: { icon: '📝', color: 'text-blue-400', bg: 'bg-blue-500/20' },
@@ -48,7 +48,7 @@ const NotesApp = () => {
   const [selectedNoteId, setSelectedNoteId] = useState(null);
   const [selectedFileId, setSelectedFileId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('notes'); // 'notes' veya 'files'
+  const [activeTab, setActiveTab] = useState('notes'); // 'notes' or 'files'
   const [isDragging, setIsDragging] = useState(false);
   const [deleteModal, setDeleteModal] = useState({
     isOpen: false,
@@ -73,20 +73,20 @@ const NotesApp = () => {
         const defaultCategories = [
           {
             id: 'personal',
-            name: 'Kişisel',
+            name: 'Personal',
             icon: '👤',
             children: [
-              { id: 'personal-diary', name: 'Günlük', icon: '📔', children: [] },
-              { id: 'personal-ideas', name: 'Fikirler', icon: '💡', children: [] },
+              { id: 'personal-diary', name: 'Diary', icon: '📔', children: [] },
+              { id: 'personal-ideas', name: 'Ideas', icon: '💡', children: [] },
             ]
           },
           {
             id: 'work',
-            name: 'İş',
+            name: 'Work',
             icon: '💼',
             children: [
-              { id: 'work-projects', name: 'Projeler', icon: '📊', children: [] },
-              { id: 'work-meetings', name: 'Toplantılar', icon: '🤝', children: [] },
+              { id: 'work-projects', name: 'Projects', icon: '📊', children: [] },
+              { id: 'work-meetings', name: 'Meetings', icon: '🤝', children: [] },
             ]
           },
         ];
@@ -113,7 +113,7 @@ const NotesApp = () => {
     }
   };
 
-  // File Handlers - Kategoriye bağlı
+  // File Handlers - Category-based
   const handleAddFiles = (categoryId, newFiles) => {
     const categoryFiles = files[categoryId] || [];
     const updatedFiles = {
@@ -139,13 +139,13 @@ const NotesApp = () => {
   const handleOpenFile = async (file) => {
     if (!file.base64) return;
 
-    // Dosya türünü belirle
+    // Determine file type
     const ext = file.name.split('.').pop().toLowerCase();
     const isImage = file.type && file.type.startsWith('image/');
     const isPdf = ext === 'pdf' || file.type === 'application/pdf';
     const isOfficeDoc = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'].includes(ext);
 
-    // Resimler için tarayıcıda aç
+    // Open images in browser
     if (isImage) {
       const newWindow = window.open();
       if (newWindow) {
@@ -169,7 +169,7 @@ const NotesApp = () => {
       return;
     }
 
-    // PDF için güzel bir görüntüleyici
+    // PDF viewer
     if (isPdf) {
       const newWindow = window.open();
       if (newWindow) {
@@ -286,7 +286,7 @@ const NotesApp = () => {
                     <div class="pdf-icon">📄</div>
                     <div class="file-info">
                       <h1>${file.name}</h1>
-                      <p>PDF Belgesi</p>
+                      <p>PDF Document</p>
                     </div>
                   </div>
                   <div class="toolbar-actions">
@@ -296,7 +296,7 @@ const NotesApp = () => {
                         <polyline points="7 10 12 15 17 10"/>
                         <line x1="12" y1="15" x2="12" y2="3"/>
                       </svg>
-                      İndir
+                      Download
                     </a>
                     <button onclick="window.print()" class="btn btn-primary">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -304,7 +304,7 @@ const NotesApp = () => {
                         <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
                         <rect x="6" y="14" width="12" height="8"/>
                       </svg>
-                      Yazdır
+                      Print
                     </button>
                   </div>
                 </div>
@@ -320,14 +320,14 @@ const NotesApp = () => {
       return;
     }
 
-    // Office dosyaları ve diğerleri için sistem uygulamasıyla aç
+    // Open office files and others with system app
     if (isOfficeDoc || true) {
       try {
         const { openFileWithSystemApp } = await import('../../utils/storage');
         await openFileWithSystemApp(file.base64, file.name);
       } catch (error) {
-        console.error('Dosya açılırken hata:', error);
-        // Fallback: İndir
+        console.error('Error opening file:', error);
+        // Fallback: Download
         const link = document.createElement('a');
         link.href = file.base64;
         link.download = file.name;
@@ -457,7 +457,7 @@ const NotesApp = () => {
   const handleAddNote = (categoryId) => {
     const newNote = {
       id: Date.now().toString(),
-      title: 'Yeni Not',
+      title: 'New Note',
       content: '',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -508,7 +508,7 @@ const NotesApp = () => {
     return categoryNotes.find(note => note.id === selectedNoteId);
   };
 
-  // Tab değiştiğinde selection'ı temizle
+  // Clear selection when tab changes
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     if (tab === 'notes') {
@@ -527,7 +527,7 @@ const NotesApp = () => {
       <div className="h-full w-full flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
-          <span className="text-slate-400 font-medium">Yükleniyor...</span>
+          <span className="text-slate-400 font-medium">Loading...</span>
         </div>
       </div>
     );
@@ -535,14 +535,14 @@ const NotesApp = () => {
 
   return (
     <div className="flex h-full">
-      {/* Sol Panel - Kategoriler */}
-      <div className="w-64 border-r border-slate-700/50 bg-slate-900/30 flex flex-col">
-        <div className="p-4 border-b border-slate-700/50">
-          <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+      {/* Left Panel - Categories */}
+      <div className="w-64 border-r flex flex-col" style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--frame-border)' }}>
+        <div className="p-4 border-b" style={{ borderColor: 'var(--frame-border)' }}>
+          <h2 className="text-lg font-semibold flex items-center gap-2" style={{ color: 'var(--text-main)' }}>
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
             </svg>
-            Kategoriler
+            Categories
           </h2>
         </div>
         <CategoryTree
@@ -558,25 +558,26 @@ const NotesApp = () => {
         />
       </div>
 
-      {/* Orta Panel - Notlar/Dosyalar Listesi (Tab ile) */}
-      <div className="w-80 border-r border-slate-700/50 bg-slate-900/20 flex flex-col">
+      {/* Middle Panel - Notes/Files List (with Tab) */}
+      <div className="w-80 border-r flex flex-col" style={{ backgroundColor: 'var(--panel-bg)', borderColor: 'var(--frame-border)' }}>
         {selectedCategoryId ? (
           <>
             {/* Tab Header */}
-            <div className="flex border-b border-slate-700/50">
+            <div className="flex border-b" style={{ borderColor: 'var(--frame-border)' }}>
               <button
                 onClick={() => handleTabChange('notes')}
                 className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-all ${activeTab === 'notes'
                   ? 'text-primary-400 bg-primary-500/10 border-b-2 border-primary-500'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                  : 'hover:text-white hover:bg-white/5'
                   }`}
+                style={{ color: activeTab === 'notes' ? 'var(--accent-500)' : 'var(--text-muted)' }}
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
-                Notlar
+                Notes
                 {(notes[selectedCategoryId] || []).length > 0 && (
-                  <span className="px-1.5 py-0.5 text-xs bg-slate-700/50 rounded-full">
+                  <span className="px-1.5 py-0.5 text-xs rounded-full" style={{ backgroundColor: 'var(--frame-bg)', color: 'var(--text-muted)' }}>
                     {(notes[selectedCategoryId] || []).length}
                   </span>
                 )}
@@ -585,15 +586,16 @@ const NotesApp = () => {
                 onClick={() => handleTabChange('files')}
                 className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-all ${activeTab === 'files'
                   ? 'text-primary-400 bg-primary-500/10 border-b-2 border-primary-500'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                  : 'hover:text-white hover:bg-white/5'
                   }`}
+                style={{ color: activeTab === 'files' ? 'var(--accent-500)' : 'var(--text-muted)' }}
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" />
                 </svg>
-                Dosyalar
+                Files
                 {getCategoryFiles().length > 0 && (
-                  <span className="px-1.5 py-0.5 text-xs bg-slate-700/50 rounded-full">
+                  <span className="px-1.5 py-0.5 text-xs rounded-full" style={{ backgroundColor: 'var(--frame-bg)', color: 'var(--text-muted)' }}>
                     {getCategoryFiles().length}
                   </span>
                 )}
@@ -619,24 +621,25 @@ const NotesApp = () => {
                   onDrop={handleDrop}
                   className={`m-3 p-4 border-2 border-dashed rounded-xl transition-all ${isDragging
                     ? 'border-primary-500 bg-primary-500/10'
-                    : 'border-slate-700/50 hover:border-slate-600'
+                    : 'hover:border-slate-500'
                     }`}
+                  style={{ backgroundColor: isDragging ? undefined : 'var(--frame-bg)', borderColor: isDragging ? undefined : 'var(--panel-border)' }}
                 >
                   <div className="flex flex-col items-center text-center">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-2 ${isDragging ? 'bg-primary-500/20' : 'bg-slate-800/50'
-                      }`}>
-                      <svg className={`w-5 h-5 ${isDragging ? 'text-primary-400' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-2 ${isDragging ? 'bg-primary-500/20' : ''}`}
+                      style={{ backgroundColor: isDragging ? undefined : 'var(--panel-bg)' }}>
+                      <svg className={`w-5 h-5 ${isDragging ? 'text-primary-400' : ''}`} style={{ color: isDragging ? undefined : 'var(--text-muted)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                       </svg>
                     </div>
-                    <p className="text-xs text-slate-400 mb-2">
-                      Dosyaları sürükleyin veya
+                    <p className="text-xs mb-2" style={{ color: 'var(--text-muted)' }}>
+                      Drag files here or
                     </p>
                     <button
                       onClick={() => fileInputRef.current?.click()}
                       className="px-3 py-1.5 text-xs bg-primary-500/20 text-primary-400 hover:bg-primary-500/30 rounded-lg transition-all"
                     >
-                      Dosya Seç
+                      Select File
                     </button>
                     <input
                       ref={fileInputRef}
@@ -660,10 +663,14 @@ const NotesApp = () => {
                           <div
                             key={file.id}
                             onClick={() => setSelectedFileId(file.id)}
-                            className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all ${isSelected
-                              ? 'bg-primary-500/20 text-primary-400'
-                              : 'text-slate-300 hover:bg-slate-800/50'
+                            className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all border ${isSelected
+                              ? 'bg-primary-500/20 text-primary-400 border-primary-500/30'
+                              : 'border-transparent hover:bg-white/5 hover:border-white/10'
                               }`}
+                            style={{
+                              backgroundColor: isSelected ? undefined : 'var(--frame-bg)',
+                              color: isSelected ? 'var(--accent-500)' : 'var(--text-main)'
+                            }}
                           >
                             <div className={`w-8 h-8 rounded-lg ${fileType.bg} flex items-center justify-center flex-shrink-0 overflow-hidden`}>
                               {isImageFile(file) && file.base64 ? (
@@ -674,15 +681,15 @@ const NotesApp = () => {
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-medium truncate">{file.name}</p>
-                              <p className="text-xs text-slate-500">{formatFileSize(file.size)}</p>
+                              <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{formatFileSize(file.size)}</p>
                             </div>
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setDeleteModal({
                                   isOpen: true,
-                                  title: 'Dosyayı Sil',
-                                  message: `"${file.name}" dosyasını silmek istediğinize emin misiniz?`,
+                                  title: 'Delete File',
+                                  message: `Are you sure you want to delete "${file.name}"?`,
                                   onConfirm: () => handleDeleteFile(selectedCategoryId, file.id)
                                 });
                               }}
@@ -697,11 +704,11 @@ const NotesApp = () => {
                       })}
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center justify-center h-32 text-slate-500 text-center px-4">
+                    <div className="flex flex-col items-center justify-center h-32 text-center px-4" style={{ color: 'var(--text-muted)' }}>
                       <svg className="w-10 h-10 mb-2 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" />
                       </svg>
-                      <p className="text-sm">Bu kategoride dosya yok</p>
+                      <p className="text-sm">No files in this category</p>
                     </div>
                   )}
                 </div>
@@ -709,18 +716,18 @@ const NotesApp = () => {
             )}
           </>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center text-slate-500 p-6">
+          <div className="flex-1 flex flex-col items-center justify-center p-6" style={{ color: 'var(--text-muted)' }}>
             <svg className="w-16 h-16 mb-4 opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
             </svg>
-            <p className="text-lg font-medium">Kategori seçin</p>
-            <p className="text-sm mt-1 text-center">Sol panelden bir kategori seçerek notlarınızı ve dosyalarınızı görüntüleyin</p>
+            <p className="text-lg font-medium" style={{ color: 'var(--text-main)' }}>Select a category</p>
+            <p className="text-sm mt-1 text-center">Select a category from the left panel to view notes and files</p>
           </div>
         )}
       </div>
 
-      {/* Sağ Panel - Not/Dosya Önizleme */}
-      <div className="flex-1 bg-slate-800/30">
+      {/* Right Panel - Note/File Preview */}
+      <div className="flex-1" style={{ backgroundColor: 'var(--panel-bg)' }}>
         {activeTab === 'notes' ? (
           <NoteEditor
             key={selectedNoteId}
@@ -728,20 +735,20 @@ const NotesApp = () => {
             onUpdate={(updates) => handleUpdateNote(selectedCategoryId, selectedNoteId, updates)}
           />
         ) : (
-          /* Dosya Önizleme */
+          /* File Preview */
           <div className="h-full flex items-center justify-center">
             {getSelectedFile() ? (
               <div className="w-full h-full flex flex-col">
-                {/* Dosya Header */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700/50">
+                {/* File Header */}
+                <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: 'var(--frame-border)' }}>
                   <div className="flex items-center gap-3">
                     <div className={`w-10 h-10 rounded-xl ${getFileType(getSelectedFile().name).bg} flex items-center justify-center`}>
                       <span className="text-xl">{getFileType(getSelectedFile().name).icon}</span>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-white">{getSelectedFile().name}</h3>
-                      <p className="text-sm text-slate-400">
-                        {formatFileSize(getSelectedFile().size)} • {new Date(getSelectedFile().createdAt).toLocaleDateString('tr-TR')}
+                      <h3 className="text-lg font-semibold" style={{ color: 'var(--text-main)' }}>{getSelectedFile().name}</h3>
+                      <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+                        {formatFileSize(getSelectedFile().size)} • {new Date(getSelectedFile().createdAt).toLocaleDateString('en-US')}
                       </p>
                     </div>
                   </div>
@@ -753,7 +760,7 @@ const NotesApp = () => {
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                       </svg>
-                      Aç
+                      Open
                     </button>
                     <button
                       onClick={() => {
@@ -768,12 +775,12 @@ const NotesApp = () => {
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                       </svg>
-                      İndir
+                      Download
                     </button>
                   </div>
                 </div>
 
-                {/* Dosya Önizleme */}
+                {/* File Preview */}
                 <div className="flex-1 flex items-center justify-center p-6 overflow-auto">
                   {isImageFile(getSelectedFile()) ? (
                     <img
@@ -793,7 +800,7 @@ const NotesApp = () => {
                         <span className="text-6xl">{getFileType(getSelectedFile().name).icon}</span>
                       </div>
                       <p className="text-xl font-semibold text-white mb-2">{getSelectedFile().name}</p>
-                      <p className="text-slate-400 mb-6">Bu dosya türü önizlenemiyor</p>
+                      <p className="text-slate-400 mb-6">This file type cannot be previewed</p>
                       <button
                         onClick={() => handleOpenFile(getSelectedFile())}
                         className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-medium rounded-xl shadow-lg shadow-primary-500/25 transition-all"
@@ -801,7 +808,7 @@ const NotesApp = () => {
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                         </svg>
-                        Dosyayı Aç
+                        Open File
                       </button>
                     </div>
                   )}
@@ -812,8 +819,8 @@ const NotesApp = () => {
                 <svg className="w-20 h-20 mb-4 opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                <p className="text-lg font-medium">Dosya seçilmedi</p>
-                <p className="text-sm mt-1">Önizlemek için listeden bir dosya seçin</p>
+                <p className="text-lg font-medium">No file selected</p>
+                <p className="text-sm mt-1">Select a file from the list to preview</p>
               </div>
             )}
           </div>

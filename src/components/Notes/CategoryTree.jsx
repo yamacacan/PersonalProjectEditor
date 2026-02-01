@@ -24,9 +24,12 @@ const CategoryItem = ({ category, level = 0, selectedId, onSelect, onAdd, onDele
       <div
         className={`
           group flex items-center gap-2 px-3 py-2 cursor-pointer transition-colors
-          ${isSelected ? 'bg-primary-500/20 text-primary-400' : 'text-slate-300 hover:bg-slate-700/30'}
+          ${isSelected ? 'bg-primary-500/20 text-primary-400' : 'hover:bg-white/5'}
         `}
-        style={{ paddingLeft: `${level * 16 + 12}px` }}
+        style={{
+          paddingLeft: `${level * 16 + 12}px`,
+          color: isSelected ? 'var(--accent-500)' : 'var(--text-main)'
+        }}
         onClick={() => onSelect(category.id)}
         onMouseEnter={() => setShowActions(true)}
         onMouseLeave={() => setShowActions(false)}
@@ -38,7 +41,8 @@ const CategoryItem = ({ category, level = 0, selectedId, onSelect, onAdd, onDele
               e.stopPropagation();
               setIsExpanded(!isExpanded);
             }}
-            className="flex-shrink-0 p-0.5 hover:bg-slate-600/50 rounded transition-colors"
+            className="flex-shrink-0 p-0.5 hover:bg-white/10 rounded transition-colors"
+            style={{ color: 'var(--text-muted)' }}
           >
             <svg
               className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
@@ -65,8 +69,9 @@ const CategoryItem = ({ category, level = 0, selectedId, onSelect, onAdd, onDele
                 e.stopPropagation();
                 setShowAddModal(true);
               }}
-              className="p-1 hover:bg-slate-600/50 rounded transition-colors"
-              title="Alt kategori ekle"
+              className="p-1 hover:bg-white/10 rounded transition-colors"
+              style={{ color: 'var(--text-muted)' }}
+              title="Add subcategory"
             >
 
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -77,7 +82,7 @@ const CategoryItem = ({ category, level = 0, selectedId, onSelect, onAdd, onDele
               <button
                 onClick={handleDelete}
                 className="p-1 hover:bg-red-500/20 text-red-400 rounded transition-colors"
-                title="Kategoriyi sil"
+                title="Delete category"
               >
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -162,12 +167,13 @@ const CategoryTree = ({ categories, selectedId, onSelect, onAdd, onDelete }) => 
         {/* Add Root Category Button */}
         <button
           onClick={() => setShowAddModal(true)}
-          className="mx-3 mb-3 w-[calc(100%-24px)] flex items-center justify-center gap-2 px-4 py-2 text-slate-400 hover:text-white bg-slate-700/30 hover:bg-slate-700/50 rounded-xl border border-dashed border-slate-600/50 hover:border-slate-500 transition-all duration-200"
+          className="mx-3 mb-3 w-[calc(100%-24px)] flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-dashed transition-all duration-200"
+          style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--panel-border)', color: 'var(--text-muted)' }}
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          <span className="text-sm font-medium">Kategori Ekle</span>
+          <span className="text-sm font-medium">Add Category</span>
         </button>
 
         {/* Add Root Category Modal */}
@@ -183,9 +189,9 @@ const CategoryTree = ({ categories, selectedId, onSelect, onAdd, onDelete }) => 
         isOpen={deleteModal.isOpen}
         onClose={() => setDeleteModal({ ...deleteModal, isOpen: false })}
         onConfirm={handleDeleteConfirm}
-        title="Kategoriyi Sil"
+        title="Delete Category"
         message={deleteModal.category
-          ? `"${deleteModal.category.name}" kategorisini ve tüm alt kategorilerini silmek istediğinize emin misiniz?`
+          ? `Are you sure you want to delete the category "${deleteModal.category.name}" and all its subcategories?`
           : ''
         }
       />

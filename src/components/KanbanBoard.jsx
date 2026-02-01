@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Column from './Column';
 import CardDetailModal from './CardDetailModal';
 import AddColumnModal from './AddColumnModal';
@@ -18,10 +18,12 @@ function KanbanBoard() {
   const [isReorderMode, setIsReorderMode] = useState(false);
   const [isBoardDropdownOpen, setIsBoardDropdownOpen] = useState(false);
   const [isRenamingBoard, setIsRenamingBoard] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [newBoardName, setNewBoardName] = useState('');
   const [isCreatingBoard, setIsCreatingBoard] = useState(false);
   const [createBoardName, setCreateBoardName] = useState('');
   const [isDraggingCard, setIsDraggingCard] = useState(false);
+  const fileInputRef = React.useRef(null);
 
   // Delete Modal State
   const [deleteModal, setDeleteModal] = useState({
@@ -30,6 +32,25 @@ function KanbanBoard() {
     message: '',
     onConfirm: null
   });
+
+  // Memoized available tags across all cards in all boards (to provide suggestions even if board changes)
+  const availableTags = useMemo(() => {
+    const tagsMap = new Map();
+    Object.values(boards).forEach(board => {
+      if (!board.columns) return;
+      Object.values(board.columns).forEach(cards => {
+        cards.forEach(card => {
+          card.tags?.forEach(tag => {
+            const key = `${tag.text.toLowerCase()}-${tag.color}`;
+            if (!tagsMap.has(key)) {
+              tagsMap.set(key, tag);
+            }
+          });
+        });
+      });
+    });
+    return Array.from(tagsMap.values());
+  }, [boards]);
 
   // Initial Data Load & Migration
   useEffect(() => {
@@ -47,7 +68,7 @@ function KanbanBoard() {
           const defaultBoardId = 'board-main';
           const defaultBoard = {
             id: defaultBoardId,
-            title: 'Ana Pano',
+            title: 'Main Board',
             columns: data.columns || {},
             columnOrder: data.columnOrder || Object.keys(data.columns || {}),
             columnTitles: data.columnTitles || {}
@@ -77,7 +98,7 @@ function KanbanBoard() {
     const boardId = 'board-' + Date.now();
     const defaultBoard = {
       id: boardId,
-      title: 'İş Panosu',
+      title: 'Work Board',
       columns: {
         'todo': [],
         'in-progress': [],
@@ -135,9 +156,9 @@ function KanbanBoard() {
       },
       columnOrder: ['todo', 'in-progress', 'done'],
       columnTitles: {
-        'todo': 'Yapılacaklar',
-        'in-progress': 'Devam Edenler',
-        'done': 'Tamamlananlar'
+        'todo': 'To Do',
+        'in-progress': 'In Progress',
+        'done': 'Done'
       }
     };
 
@@ -153,8 +174,8 @@ function KanbanBoard() {
     if (Object.keys(boards).length <= 1) {
       setDeleteModal({
         isOpen: true,
-        title: 'Silinemez',
-        message: 'En az bir pano kalmalıdır!',
+        title: 'Cannot Delete',
+        message: 'At least one board must remain!',
         onConfirm: null
       });
       return;
@@ -162,8 +183,8 @@ function KanbanBoard() {
 
     setDeleteModal({
       isOpen: true,
-      title: 'Panoyu Sil',
-      message: `"${boards[activeBoardId].title}" panosunu silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`,
+      title: 'Delete Board',
+      message: `Are you sure you want to delete "${boards[activeBoardId].title}" board? This action cannot be undone.`,
       onConfirm: async () => {
         const newBoards = { ...boards };
         delete newBoards[activeBoardId];
@@ -200,6 +221,69 @@ function KanbanBoard() {
     setBoards(newBoards);
     setIsRenamingBoard(false);
     await saveData(newBoards, activeBoardId);
+  };
+
+  const handleExportData = () => {
+    const dataToExport = {
+      boards: boards,
+      activeBoardId: activeBoardId,
+      version: '1.0',
+      exportedAt: new Date().toISOString()
+    };
+
+    const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `kanban-backup-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportData = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const importedData = JSON.parse(event.target.result);
+
+        // Basic validation
+        if (importedData && importedData.boards && typeof importedData.boards === 'object') {
+          // Check if any board has columns
+          const hasBoards = Object.keys(importedData.boards).length > 0;
+          if (!hasBoards) throw new Error('No boards found');
+
+          setBoards(importedData.boards);
+          const firstBoardId = Object.keys(importedData.boards)[0];
+          setActiveBoardId(importedData.activeBoardId || firstBoardId);
+          await saveData(importedData.boards, importedData.activeBoardId || firstBoardId);
+
+          setDeleteModal({
+            isOpen: true,
+            title: 'Import Successful',
+            message: 'Your Kanban data has been successfully imported.',
+            onConfirm: null
+          });
+        } else {
+          throw new Error('Invalid format');
+        }
+      } catch (error) {
+        console.error('Error importing data:', error);
+        setDeleteModal({
+          isOpen: true,
+          title: 'Import Failed',
+          message: 'The selected file is not a valid Kanban backup.',
+          onConfirm: null
+        });
+      }
+    };
+    reader.readAsText(file);
+    // Reset input
+    e.target.value = '';
   };
 
   // --- Column & Card Management (Scoped to Active Board) ---
@@ -341,8 +425,8 @@ function KanbanBoard() {
 
     setDeleteModal({
       isOpen: true,
-      title: 'Kolonu Sil',
-      message: `"${columnTitle}" kolonunu silmek istediğinize emin misiniz?${cardCount > 0 ? ` Bu kolonda ${cardCount} kart var ve hepsi silinecektir.` : ''}`,
+      title: 'Delete Column',
+      message: `Are you sure you want to delete "${columnTitle}" column?${cardCount > 0 ? ` This column has ${cardCount} cards and all will be deleted.` : ''}`,
       onConfirm: () => {
         const newColumns = { ...currentBoard.columns };
         delete newColumns[columnId];
@@ -389,7 +473,7 @@ function KanbanBoard() {
       <div className="h-full w-full flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
-          <span className="text-slate-400 font-medium">Yükleniyor...</span>
+          <span className="text-slate-400 font-medium">Loading...</span>
         </div>
       </div>
     );
@@ -428,167 +512,226 @@ function KanbanBoard() {
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <header className="flex-shrink-0 px-6 py-4 border-b border-slate-700/50 bg-slate-900/50">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            {/* Board Selector & Title */}
-            <div className="relative group">
-              <div
-                className="flex items-center gap-2 cursor-pointer"
-                onClick={() => setIsBoardDropdownOpen(!isBoardDropdownOpen)}
-              >
-                {isRenamingBoard ? (
-                  <input
-                    type="text"
-                    value={newBoardName}
-                    onChange={(e) => setNewBoardName(e.target.value)}
-                    onBlur={handleRenameBoardSave}
-                    onKeyDown={(e) => e.key === 'Enter' && handleRenameBoardSave()}
-                    autoFocus
-                    className="bg-slate-800 text-xl font-bold text-white px-2 py-1 rounded border border-blue-500 outline-none"
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                ) : (
-                  <h1 className="text-xl font-bold text-white hover:text-blue-400 transition-colors flex items-center gap-2">
-                    {currentBoard.title}
-                    <svg className={`w-5 h-5 transition-transform ${isBoardDropdownOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+      <header className="flex-none backdrop-blur-xl border-b z-20 sticky top-0" style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--frame-border)' }}>
+        <div className="px-6 py-4 max-w-[2000px] mx-auto">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            {/* Left Section: Board Selector & Actions */}
+            <div className="flex items-center gap-3">
+              <div className="relative group">
+                <button
+                  onClick={() => setIsBoardDropdownOpen(!isBoardDropdownOpen)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl backdrop-blur-sm border transition-all group"
+                  style={{ backgroundColor: 'var(--panel-bg)', borderColor: 'var(--panel-border)' }}
+                >
+                  <div className="w-8 h-8 rounded-lg bg-primary-500/10 flex items-center justify-center">
+                    <svg className="w-5 h-5 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                     </svg>
-                  </h1>
+                  </div>
+                  {isRenamingBoard ? (
+                    <input
+                      type="text"
+                      value={newBoardName}
+                      onChange={(e) => setNewBoardName(e.target.value)}
+                      onBlur={handleRenameBoardSave}
+                      onKeyDown={(e) => e.key === 'Enter' && handleRenameBoardSave()}
+                      autoFocus
+                      className="bg-transparent text-lg font-bold text-white outline-none min-w-[120px]"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  ) : (
+                    <span className="text-lg font-bold group-hover:text-primary-400 transition-colors" style={{ color: 'var(--text-main)' }}>
+                      {currentBoard.title}
+                    </span>
+                  )}
+                  <svg className={`w-4 h-4 text-slate-400 transition-transform ${isBoardDropdownOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {/* Dropdown Menu */}
+                {isBoardDropdownOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-10"
+                      onClick={() => {
+                        setIsBoardDropdownOpen(false);
+                        setIsCreatingBoard(false);
+                        setCreateBoardName('');
+                      }}
+                    ></div>
+                    <div className="absolute top-full left-0 mt-3 w-72 backdrop-blur-xl border rounded-2xl shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200" style={{ backgroundColor: 'var(--panel-bg)', borderColor: 'var(--panel-border)' }}>
+                      <div className="p-4 border-b bg-white/5" style={{ borderColor: 'var(--panel-border)' }}>
+                        <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>My Boards</p>
+                      </div>
+                      <div className="max-h-64 overflow-y-auto p-1.5">
+                        {Object.values(boards).map(board => (
+                          <button
+                            key={board.id}
+                            onClick={() => {
+                              setActiveBoardId(board.id);
+                              setIsBoardDropdownOpen(false);
+                              setIsCreatingBoard(false);
+                            }}
+                            className={`w-full text-left px-3 py-2.5 rounded-xl hover:bg-white/5 transition-all flex items-center justify-between group ${activeBoardId === board.id ? 'bg-primary-500/10 text-primary-400' : ''}`}
+                            style={{ color: activeBoardId === board.id ? 'var(--accent-500)' : 'var(--text-main)' }}
+                          >
+                            <span className="font-medium truncate">{board.title}</span>
+                            {activeBoardId === board.id && <div className="w-1.5 h-1.5 rounded-full bg-primary-400 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Create New Board Section */}
+                      <div className="p-3 border-t bg-black/20" style={{ borderColor: 'var(--panel-border)' }}>
+                        {isCreatingBoard ? (
+                          <div className="space-y-2">
+                            <input
+                              type="text"
+                              value={createBoardName}
+                              onChange={(e) => setCreateBoardName(e.target.value)}
+                              placeholder="Board name..."
+                              autoFocus
+                              className="w-full px-3 py-2 bg-black/20 border rounded-lg text-sm focus:outline-none focus:border-primary-500/50"
+                              style={{ color: 'var(--text-main)', borderColor: 'var(--panel-border)' }}
+                              onKeyDown={(e) => e.key === 'Enter' && handleCreateBoard()}
+                            />
+                            <div className="flex gap-2 justify-end">
+                              <button onClick={() => { setIsCreatingBoard(false); setCreateBoardName(''); }} className="px-3 py-1.5 text-xs hover:text-white transition-colors" style={{ color: 'var(--text-muted)' }}>Cancel</button>
+                              <button onClick={handleCreateBoard} disabled={!createBoardName.trim()} className="px-3 py-1.5 bg-primary-500 hover:bg-primary-600 disabled:opacity-50 text-white text-xs font-bold rounded-lg transition-all">Create</button>
+                            </div>
+                          </div>
+                        ) : (
+                          <button onClick={() => setIsCreatingBoard(true)} className="w-full flex items-center gap-2 px-3 py-2 text-sm text-primary-400 hover:bg-primary-500/10 rounded-xl transition-all font-medium">
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                            Create New Board
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </>
                 )}
               </div>
 
-              {/* Dropdown Menu */}
-              {isBoardDropdownOpen && (
-                <>
-                  <div
-                    className="fixed inset-0 z-10"
-                    onClick={() => {
-                      setIsBoardDropdownOpen(false);
-                      setIsCreatingBoard(false);
-                      setCreateBoardName('');
-                    }}
-                  ></div>
-                  <div className="absolute top-full left-0 mt-2 w-72 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl z-20 overflow-hidden">
-                    <div className="p-2 border-b border-slate-700">
-                      <p className="text-xs text-slate-400 font-medium px-2 py-1">PANOLARIM</p>
-                    </div>
-                    <div className="max-h-60 overflow-y-auto">
-                      {Object.values(boards).map(board => (
-                        <button
-                          key={board.id}
-                          onClick={() => {
-                            setActiveBoardId(board.id);
-                            setIsBoardDropdownOpen(false);
-                            setIsCreatingBoard(false);
-                          }}
-                          className={`w-full text-left px-4 py-3 hover:bg-slate-700 transition-colors flex items-center justify-between ${activeBoardId === board.id ? 'bg-slate-700/50 text-blue-400' : 'text-slate-300'
-                            }`}
-                        >
-                          <span className="font-medium truncate">{board.title}</span>
-                          {activeBoardId === board.id && (
-                            <svg className="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                          )}
-                        </button>
-                      ))}
-                    </div>
-
-                    {/* Create New Board Section */}
-                    <div className="p-2 border-t border-slate-700 bg-slate-800/50">
-                      {isCreatingBoard ? (
-                        <div className="p-2 space-y-2">
-                          <input
-                            type="text"
-                            value={createBoardName}
-                            onChange={(e) => setCreateBoardName(e.target.value)}
-                            placeholder="Pano adı..."
-                            autoFocus
-                            className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500"
-                            onKeyDown={(e) => e.key === 'Enter' && handleCreateBoard()}
-                          />
-                          <div className="flex gap-2 justify-end">
-                            <button
-                              onClick={() => {
-                                setIsCreatingBoard(false);
-                                setCreateBoardName('');
-                              }}
-                              className="px-3 py-1 text-xs text-slate-400 hover:text-white transition-colors"
-                            >
-                              İptal
-                            </button>
-                            <button
-                              onClick={handleCreateBoard}
-                              disabled={!createBoardName.trim()}
-                              className="px-3 py-1 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-medium rounded transition-colors"
-                            >
-                              Oluştur
-                            </button>
-                          </div>
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => setIsCreatingBoard(true)}
-                          className="w-full flex items-center gap-2 px-3 py-2 text-sm text-blue-400 hover:bg-slate-700 rounded-lg transition-colors"
-                        >
-                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                          </svg>
-                          Yeni Pano Oluştur
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </>
-              )}
+              {/* Board Actions */}
+              <div className="flex items-center gap-1 rounded-xl border p-1" style={{ backgroundColor: 'var(--panel-bg)', borderColor: 'var(--panel-border)' }}>
+                <button
+                  onClick={handleRenameBoardStart}
+                  className="p-2 hover:bg-white/10 rounded-lg transition-all"
+                  style={{ color: 'var(--text-muted)' }}
+                  title="Rename Board"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
+                <button
+                  onClick={handleDeleteBoard}
+                  className="p-2 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
+                  style={{ color: 'var(--text-muted)' }}
+                  title="Delete Board"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
             </div>
 
-            {/* Board Actions */}
-            <div className="flex items-center gap-1 border-l border-slate-700 pl-4 ml-2">
+            {/* Middle Section: Search */}
+            <div className="flex-1 max-w-lg hidden lg:block">
+              <div className="relative group/search">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                  <svg className="w-4 h-4 text-slate-500 group-focus-within/search:text-primary-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search across all cards..."
+                  className="w-full pl-10 pr-4 py-2.5 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500/30 focus:bg-white/10 transition-all text-sm backdrop-blur-sm"
+                  style={{ backgroundColor: 'var(--panel-bg)', borderColor: 'var(--panel-border)', color: 'var(--text-main)' }}
+                />
+              </div>
+            </div>
+
+            {/* Right Section: Actions */}
+            <div className="flex items-center gap-3">
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleImportData}
+                accept=".json"
+                className="hidden"
+              />
+
+              <div className="flex items-center gap-1 rounded-xl border p-1" style={{ backgroundColor: 'var(--panel-bg)', borderColor: 'var(--panel-border)' }}>
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="p-2 hover:bg-white/10 rounded-lg transition-all flex items-center gap-2"
+                  style={{ color: 'var(--text-muted)' }}
+                  title="Import JSON"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                  </svg>
+                  <span className="text-xs font-bold hidden sm:inline">Import</span>
+                </button>
+                <div className="w-px h-4 bg-white/10 mx-1"></div>
+                <button
+                  onClick={handleExportData}
+                  className="p-2 hover:bg-white/10 rounded-lg transition-all flex items-center gap-2"
+                  style={{ color: 'var(--text-muted)' }}
+                  title="Export JSON"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  <span className="text-xs font-bold hidden sm:inline">Export</span>
+                </button>
+              </div>
+
               <button
-                onClick={handleRenameBoardStart}
-                className="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
-                title="Panoyu Yeniden Adlandır"
+                onClick={() => setIsReorderMode(!isReorderMode)}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all text-sm border ${isReorderMode
+                  ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20'
+                  : 'hover:bg-white/5'
+                  }`}
+                style={{
+                  backgroundColor: isReorderMode ? undefined : 'var(--panel-bg)',
+                  borderColor: isReorderMode ? undefined : 'var(--panel-border)',
+                  color: isReorderMode ? undefined : 'var(--text-main)'
+                }}
               >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
+                <span>{isReorderMode ? 'Done' : 'Reorder'}</span>
               </button>
+
+              <div className="lg:hidden flex-1 relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search..."
+                  className="w-full pl-3 pr-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:border-primary-500/50"
+                  style={{ backgroundColor: 'var(--panel-bg)', borderColor: 'var(--panel-border)', color: 'var(--text-main)' }}
+                />
+              </div>
+
               <button
-                onClick={handleDeleteBoard}
-                className="p-2 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded-lg transition-colors"
-                title="Panoyu Sil"
+                onClick={() => setIsAddColumnModalOpen(true)}
+                className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-br from-primary-500 to-primary-600 hover:from-primary-400 hover:to-primary-500 text-white rounded-xl font-bold text-sm transition-all shadow-lg shadow-primary-500/25 hover:shadow-primary-500/40 border border-white/10 active:scale-95"
               >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
                 </svg>
+                <span className="hidden sm:inline">Add Column</span>
               </button>
             </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setIsReorderMode(!isReorderMode)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all duration-200 ${isReorderMode
-                ? 'bg-blue-500 hover:bg-blue-600 text-white shadow-lg shadow-blue-500/25'
-                : 'bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white'
-                }`}
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-              <span className="hidden sm:inline">{isReorderMode ? 'Düzenlemeyi Bitir' : 'Sıralamayı Düzenle'}</span>
-            </button>
-            <button
-              onClick={() => setIsAddColumnModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 bg-primary-500 hover:bg-primary-600 text-white rounded-xl font-medium transition-all duration-200 shadow-lg shadow-primary-500/25 hover:shadow-primary-500/40"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              <span className="hidden sm:inline">Kolon Ekle</span>
-            </button>
           </div>
         </div>
       </header>
@@ -596,43 +739,53 @@ function KanbanBoard() {
       {/* Board */}
       <main className="flex-1 overflow-x-auto overflow-y-hidden p-6">
         <div className="flex gap-5 h-full min-w-max">
-          {currentBoard.columnOrder && currentBoard.columnOrder.map((columnId) => (
-            <Column
-              key={columnId}
-              title={getColumnTitle(columnId)}
-              columnId={columnId}
-              cards={currentBoard.columns[columnId] || []}
-              colorClass={getColumnColor(columnId)}
-              onCardMove={handleCardMove}
-              onCardEdit={handleCardEdit}
-              onCardDelete={handleCardDelete}
-              onAddCard={handleAddCard}
-              onCardViewDetail={handleCardViewDetail}
-              onDeleteColumn={handleDeleteColumn}
-              onEditColumn={handleEditColumn}
-              onColumnReorder={isReorderMode ? handleColumnReorder : null}
-              isReorderMode={isReorderMode}
-              onCardDragStart={handleCardDragStart}
-              onCardDragEnd={handleCardDragEnd}
-            />
-
-          ))}
+          {currentBoard.columnOrder && currentBoard.columnOrder.map((columnId) => {
+            const cards = currentBoard.columns[columnId] || [];
+            const filteredCards = cards.filter(card =>
+              card.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              card.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              card.tags?.some(tag => tag.text.toLowerCase().includes(searchQuery.toLowerCase()))
+            );
+            return (
+              <Column
+                key={columnId}
+                title={getColumnTitle(columnId)}
+                columnId={columnId}
+                cards={filteredCards}
+                colorClass={getColumnColor(columnId)}
+                onCardMove={handleCardMove}
+                onCardEdit={handleCardEdit}
+                onCardDelete={handleCardDelete}
+                onAddCard={handleAddCard}
+                onCardViewDetail={handleCardViewDetail}
+                onDeleteColumn={handleDeleteColumn}
+                onEditColumn={handleEditColumn}
+                onColumnReorder={isReorderMode ? handleColumnReorder : null}
+                isReorderMode={isReorderMode}
+                onCardDragStart={handleCardDragStart}
+                onCardDragEnd={handleCardDragEnd}
+              />
+            );
+          })}
         </div>
-      </main>
+      </main >
 
       {/* Modals */}
-      {selectedCard && (
-        <CardDetailModal
-          card={selectedCard}
-          isOpen={isCardModalOpen}
-          onClose={() => {
-            setIsCardModalOpen(false);
-            setSelectedCard(null);
-          }}
-          onSave={(cardId, updates) => handleCardEdit(cardId, updates)}
-          onDelete={handleCardDelete}
-        />
-      )}
+      {
+        selectedCard && (
+          <CardDetailModal
+            card={selectedCard}
+            availableTags={availableTags}
+            isOpen={isCardModalOpen}
+            onClose={() => {
+              setIsCardModalOpen(false);
+              setSelectedCard(null);
+            }}
+            onSave={(cardId, updates) => handleCardEdit(cardId, updates)}
+            onDelete={handleCardDelete}
+          />
+        )
+      }
 
       <AddColumnModal
         isOpen={isAddColumnModalOpen}
@@ -653,7 +806,7 @@ function KanbanBoard() {
         onCardDrop={handleTrashDrop}
         isVisible={isDraggingCard}
       />
-    </div>
+    </div >
   );
 }
 

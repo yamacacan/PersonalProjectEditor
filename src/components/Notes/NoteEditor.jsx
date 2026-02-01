@@ -72,22 +72,23 @@ const NoteEditor = ({ note, onUpdate }) => {
         <svg className="w-20 h-20 mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
         </svg>
-        <p className="text-lg font-medium mb-2">Editor Boş</p>
-        <p className="text-sm text-center opacity-70">Düzenlemek için sol taraftan bir not seçin veya yeni oluşturun.</p>
+        <p className="text-lg font-medium mb-2">Editor is empty</p>
+        <p className="text-sm text-center opacity-70">Select a note from the left or create a new one.</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-full bg-slate-800/30">
+    <div className="flex flex-col h-full" style={{ backgroundColor: 'var(--panel-bg)' }}>
       {/* Title Input */}
-      <div className="p-6 border-b border-slate-700/50 flex-shrink-0">
+      <div className="p-6 border-b flex-shrink-0" style={{ borderColor: 'var(--panel-border)' }}>
         <input
           type="text"
           value={title}
           onChange={handleTitleChange}
-          placeholder="Başlık..."
-          className="w-full text-3xl font-bold bg-transparent text-white placeholder-slate-500 focus:outline-none"
+          placeholder="Title..."
+          className="w-full text-3xl font-bold bg-transparent focus:outline-none"
+          style={{ color: 'var(--text-main)' }}
         />
       </div>
 
@@ -98,19 +99,19 @@ const NoteEditor = ({ note, onUpdate }) => {
           value={content}
           onChange={handleContentChange}
           modules={modules}
-          className="flex-1 flex flex-col h-full text-slate-200"
+          className="flex-1 flex flex-col h-full"
           ref={quillRef}
-          placeholder="Notunuzu buraya yazın..."
+          placeholder="Write your note here..."
         />
       </div>
 
       {/* Footer Info */}
-      <div className="px-6 py-2 border-t border-slate-700/50 text-xs text-slate-500 flex items-center justify-between flex-shrink-0 bg-slate-900/30">
+      <div className="px-6 py-2 border-t text-xs flex items-center justify-between flex-shrink-0" style={{ borderColor: 'var(--panel-border)', backgroundColor: 'var(--frame-bg)', color: 'var(--text-muted)' }}>
         <span>
-          {note.updatedAt ? `Son güncelleme: ${new Date(note.updatedAt).toLocaleString('tr-TR')}` : ''}
+          {note.updatedAt ? `Last updated: ${new Date(note.updatedAt).toLocaleString('en-US')}` : ''}
         </span>
         <span className={saveTimeoutRef.current ? "text-yellow-500" : "text-green-500"}>
-          {saveTimeoutRef.current ? "Kaydediliyor..." : "Kaydedildi"}
+          {saveTimeoutRef.current ? "Saving..." : "Saved"}
         </span>
       </div>
     </div>
