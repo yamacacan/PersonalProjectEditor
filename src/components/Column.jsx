@@ -141,7 +141,10 @@ const Column = ({
           {/* Drag Handle */}
           {isReorderMode && onColumnReorder && (
             <div
-              className="text-slate-500 hover:text-slate-300 cursor-grab active:cursor-grabbing transition-colors animate-fade-in"
+              className="cursor-grab active:cursor-grabbing transition-colors animate-fade-in"
+              style={{ color: 'var(--text-muted)' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-main)'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
               title="Drag to move column"
             >
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -185,7 +188,10 @@ const Column = ({
             {onEditColumn && (
               <button
                 onClick={handleTitleDoubleClick}
-                className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700/50 rounded-lg transition-colors"
+                className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+                style={{ color: 'var(--text-muted)' }}
+                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-main)'}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
                 title="Edit Column"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -195,7 +201,10 @@ const Column = ({
             )}
             <button
               onClick={() => setIsAddingCard(true)}
-              className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700/50 rounded-lg transition-colors"
+              className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+              style={{ color: 'var(--text-muted)' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-main)'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
               title="Add Card"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -205,7 +214,8 @@ const Column = ({
             {onDeleteColumn && (
               <button
                 onClick={() => onDeleteColumn(columnId)}
-                className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                className="p-1.5 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                style={{ color: 'var(--text-muted)' }}
                 title="Delete Column"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

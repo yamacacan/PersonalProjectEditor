@@ -598,7 +598,7 @@ function KanbanBoard() {
                             />
                             <div className="flex gap-2 justify-end">
                               <button onClick={() => { setIsCreatingBoard(false); setCreateBoardName(''); }} className="px-3 py-1.5 text-xs hover:text-white transition-colors" style={{ color: 'var(--text-muted)' }}>Cancel</button>
-                              <button onClick={handleCreateBoard} disabled={!createBoardName.trim()} className="px-3 py-1.5 disabled:opacity-50 text-white text-xs font-bold rounded-lg transition-all" style={{ backgroundColor: 'var(--accent-500)' }}>Create</button>
+                              <button onClick={handleCreateBoard} disabled={!createBoardName.trim()} className="px-3 py-1.5 disabled:opacity-50 text-xs font-bold rounded-lg transition-all" style={{ backgroundColor: 'var(--accent-500)', color: 'var(--accent-contrast)' }}>Create</button>
                             </div>
                           </div>
                         ) : (
@@ -702,7 +702,7 @@ function KanbanBoard() {
                 style={{
                   backgroundColor: isReorderMode ? 'var(--accent-500)' : 'var(--panel-bg)',
                   borderColor: isReorderMode ? 'var(--accent-500)' : 'var(--panel-border)',
-                  color: isReorderMode ? undefined : 'var(--text-main)'
+                  color: isReorderMode ? 'var(--accent-contrast)' : 'var(--text-main)'
                 }}
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -724,8 +724,8 @@ function KanbanBoard() {
 
               <button
                 onClick={() => setIsAddColumnModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-2.5 text-white rounded-xl font-bold text-sm transition-all shadow-lg border border-white/10 active:scale-95"
-                style={{ backgroundColor: 'var(--accent-500)' }}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg border border-white/10 active:scale-95"
+                style={{ backgroundColor: 'var(--accent-500)', color: 'var(--accent-contrast)' }}
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />

@@ -76,8 +76,8 @@ const AddColumnModal = ({ isOpen, onClose, onAdd }) => {
             </button>
             <button
               type="submit"
-              className="flex-1 px-5 py-2.5 text-white rounded-xl font-medium transition-colors"
-              style={{ backgroundColor: 'var(--accent-500)' }}
+              className="flex-1 px-5 py-2.5 rounded-xl font-medium transition-colors"
+              style={{ backgroundColor: 'var(--accent-500)', color: 'var(--accent-contrast)' }}
             >
               Add Column
             </button>

@@ -42,6 +42,7 @@ function App() {
       rose: { 500: '#f43f5e', 600: '#e11d48' },
       purple: { 500: '#a855f7', 600: '#9333ea' },
       pink: { 500: '#ec4899', 600: '#db2777' },
+      white: { 500: '#ffffff', 600: '#f8fafc', contrast: '#000000' },
     };
 
     // Frame colors for each theme
@@ -141,6 +142,7 @@ function App() {
     root.style.setProperty('--canvas-dot', frame.canvasDot);
     root.style.setProperty('--text-main', frame.textMain || '#ffffff');
     root.style.setProperty('--text-muted', frame.textMuted || '#94a3b8');
+    root.style.setProperty('--accent-contrast', accent.contrast || '#ffffff');
   }, [themeSettings]);
 
   const currentTheme = themes[themeSettings.theme] || themes.dark;

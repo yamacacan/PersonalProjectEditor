@@ -109,8 +109,11 @@ const AddCategoryModal = ({ isOpen, onClose, onAdd, parentName = null }) => {
             <button
               type="submit"
               disabled={!name.trim()}
-              className="flex-1 px-4 py-2.5 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-medium transition-colors"
-              style={{ backgroundColor: name.trim() ? 'var(--accent-500)' : 'var(--panel-border)' }}
+              className="flex-1 px-4 py-2.5 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-medium transition-colors"
+              style={{
+                backgroundColor: name.trim() ? 'var(--accent-500)' : 'var(--panel-border)',
+                color: name.trim() ? 'var(--accent-contrast)' : 'var(--text-muted)'
+              }}
             >
               Add
             </button>

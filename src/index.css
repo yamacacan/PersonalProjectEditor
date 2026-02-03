@@ -47,8 +47,9 @@
 
 @layer components {
   .btn-primary {
-    @apply px-4 py-2 text-white rounded-lg font-medium transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2;
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2;
     background-color: var(--accent-500);
+    color: var(--accent-contrast);
   }
 
   .btn-primary:hover {
@@ -182,6 +183,7 @@
 .app-logo-small {
   @apply w-6 h-6 rounded-md flex items-center justify-center;
   background: linear-gradient(to bottom right, var(--accent-500), var(--accent-600));
+  color: var(--accent-contrast);
 }
 
 .window-control {
@@ -218,6 +220,7 @@
   @apply w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg;
   background: linear-gradient(to bottom right, var(--accent-500), var(--accent-600));
   box-shadow: 0 10px 15px -3px rgba(var(--accent-rgb), 0.25);
+  color: var(--accent-contrast);
 }
 
 .sidebar-logo-text {
@@ -341,8 +344,9 @@
 }
 
 .theme-card-check {
-  @apply absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center text-white;
+  @apply absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center;
   background-color: var(--accent-500);
+  color: var(--accent-contrast);
 }
 
 /* Accent Color Buttons */

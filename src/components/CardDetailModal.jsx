@@ -254,8 +254,8 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete, availableTag
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="px-4 py-2 text-white text-sm font-medium rounded-lg transition-colors"
-                    style={{ backgroundColor: 'var(--accent-500)' }}
+                    className="px-4 py-2 text-sm font-medium rounded-lg transition-colors"
+                    style={{ backgroundColor: 'var(--accent-500)', color: 'var(--accent-contrast)' }}
                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-600)'}
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-500)'}
                   >
@@ -425,8 +425,8 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete, availableTag
               <button
                 type="button"
                 onClick={() => handleAddTag()}
-                className="px-3 py-2 text-white text-sm font-medium rounded-lg transition-colors"
-                style={{ backgroundColor: 'var(--accent-500)' }}
+                className="px-3 py-2 text-sm font-medium rounded-lg transition-colors"
+                style={{ backgroundColor: 'var(--accent-500)', color: 'var(--accent-contrast)' }}
               >
                 Add
               </button>
@@ -509,7 +509,7 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete, availableTag
                       }}
                     >
                       {todo.completed && (
-                        <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-3.5 h-3.5" style={{ color: 'var(--accent-contrast)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                         </svg>
                       )}
@@ -556,8 +556,8 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete, availableTag
               <button
                 type="button"
                 onClick={handleAddTodo}
-                className="px-4 py-2.5 text-white text-sm font-medium rounded-xl transition-colors flex items-center gap-2"
-                style={{ backgroundColor: 'var(--accent-500)' }}
+                className="px-4 py-2.5 text-sm font-medium rounded-xl transition-colors flex items-center gap-2"
+                style={{ backgroundColor: 'var(--accent-500)', color: 'var(--accent-contrast)' }}
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -614,8 +614,8 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete, availableTag
             <button
               type="button"
               onClick={handleSave}
-              className="px-5 py-2.5 text-white rounded-xl font-medium transition-colors"
-              style={{ backgroundColor: 'var(--accent-500)' }}
+              className="px-5 py-2.5 rounded-xl font-medium transition-colors"
+              style={{ backgroundColor: 'var(--accent-500)', color: 'var(--accent-contrast)' }}
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-600)'}
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-500)'}
             >
