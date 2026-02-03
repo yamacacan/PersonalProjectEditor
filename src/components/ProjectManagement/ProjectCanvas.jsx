@@ -17,7 +17,7 @@ const shapeTypes = [
 
 const defaultNodeStyle = {
     fillColor: "#1a252b",
-    strokeColor: "#13a4ec",
+    strokeColor: 'var(--accent-500)',
     strokeWidth: 2,
     cornerRadius: 8,
     opacity: 1,
@@ -491,7 +491,7 @@ const ProjectCanvas = () => {
             } else if (connectFromId !== nodeId) {
                 updateProject((p) => ({
                     ...p,
-                    connections: [...(p.connections || []), { id: createId("conn"), from: connectFromId, to: nodeId, label: "", style: { color: "#13a4ec", width: 2, dashed: false } }],
+                    connections: [...(p.connections || []), { id: createId("conn"), from: connectFromId, to: nodeId, label: "", style: { color: 'var(--accent-500)', width: 2, dashed: false } }],
                 }));
                 setConnectFromId(null);
             }
@@ -616,7 +616,7 @@ const ProjectCanvas = () => {
                                                 setIsProjectMenuOpen(false);
                                                 setSelectedIds(new Set());
                                             }}
-                                            className={`w-full text-left px-3 py-2 rounded-lg hover:bg-white/5 transition-all flex items-center justify-between group ${activeProjectId === project.id ? 'bg-primary-500/10 text-primary-400' : ''}`}
+                                            className={`w-full text-left px-3 py-2 rounded-lg hover:bg-white/5 transition-all flex items-center justify-between group ${activeProjectId === project.id ? 'bg-white/5' : ''}`}
                                             style={{ color: activeProjectId === project.id ? 'var(--accent-500)' : 'var(--text-main)' }}
                                         >
                                             <span className="font-medium text-sm truncate">{project.name}</span>
@@ -653,10 +653,10 @@ const ProjectCanvas = () => {
                 {/* Sol Araç Çubuğu */}
                 <div className="w-14 border-r flex flex-col items-center py-4 gap-2 shrink-0 backdrop-blur-sm z-10" style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--frame-border)' }}>
                     <div className="flex flex-col gap-1 p-1 bg-white/5 rounded-xl border border-white/5 mb-2">
-                        <button onClick={() => { setMode("select"); setShapeToAdd(null); }} className={`p-2.5 rounded-lg transition-all ${mode === "select" ? "bg-blue-500 text-white shadow-lg shadow-blue-500/25" : "text-slate-400 hover:text-white hover:bg-white/10"}`} title="Select (V)">
+                        <button onClick={() => { setMode("select"); setShapeToAdd(null); }} className={`p-2.5 rounded-lg transition-all ${mode === "select" ? "text-white shadow-lg" : "text-slate-400 hover:text-white hover:bg-white/10"}`} style={{ backgroundColor: mode === "select" ? 'var(--accent-500)' : 'transparent' }} title="Select (V)">
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2z" /></svg>
                         </button>
-                        <button onClick={() => { setMode("pan"); setShapeToAdd(null); }} className={`p-2.5 rounded-lg transition-all ${mode === "pan" ? "bg-blue-500 text-white shadow-lg shadow-blue-500/25" : "text-slate-400 hover:text-white hover:bg-white/10"}`} title="Pan (H)">
+                        <button onClick={() => { setMode("pan"); setShapeToAdd(null); }} className={`p-2.5 rounded-lg transition-all ${mode === "pan" ? "text-white shadow-lg" : "text-slate-400 hover:text-white hover:bg-white/10"}`} style={{ backgroundColor: mode === "pan" ? 'var(--accent-500)' : 'transparent' }} title="Pan (H)">
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11V8a4 4 0 118 0v3m-9 4h10a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z" /></svg>
                         </button>
                         <button onClick={() => { setMode("connect"); setShapeToAdd(null); }} className={`p-2.5 rounded-lg transition-all ${mode === "connect" ? "bg-amber-500 text-white shadow-lg shadow-amber-500/25" : "text-slate-400 hover:text-white hover:bg-white/10"}`} title="Connection">
@@ -679,9 +679,9 @@ const ProjectCanvas = () => {
                             <div className="text-[10px] font-semibold text-slate-500 px-2 py-1 uppercase tracking-wider mb-1">More Shapes</div>
                             <div className="grid grid-cols-2 gap-1">
                                 {shapeTypes.map(shape => (
-                                    <button key={shape.id} onClick={() => { setShapeToAdd(shape.id); setMode("add"); setShowShapeMenu(false); }} className="w-full text-left px-2 py-2 rounded-lg text-xs text-slate-300 hover:bg-blue-500/20 hover:text-blue-400 flex flex-col items-center gap-1 transition-colors">
-                                        <span className="text-lg">{shape.icon}</span>
-                                        <span>{shape.label}</span>
+                                    <button key={shape.id} onClick={() => { setShapeToAdd(shape.id); setMode("add"); setShowShapeMenu(false); }} className="w-full text-left px-2 py-2 rounded-lg text-xs text-slate-300 hover:bg-white/5 transition-colors group">
+                                        <span className="text-lg group-hover:text-[var(--accent-500)]">{shape.icon}</span>
+                                        <span className="group-hover:text-[var(--accent-500)]">{shape.label}</span>
                                     </button>
                                 ))}
                             </div>
@@ -708,8 +708,8 @@ const ProjectCanvas = () => {
                                 const isSelected = selectedConnectionId === conn.id;
                                 return (
                                     <g key={conn.id} onClick={(e) => { e.stopPropagation(); setSelectedConnectionId(conn.id); setSelectedIds(new Set()); }} className="pointer-events-auto cursor-pointer">
-                                        <path d={`M${start.x},${start.y} C${midX},${start.y} ${midX},${end.y} ${end.x},${end.y}`} stroke={isSelected ? "#13a4ec" : (conn.style?.color || "#475569")} strokeWidth={isSelected ? 3 : (conn.style?.width || 2)} fill="none" strokeDasharray={conn.style?.dashed ? "6,4" : "none"} />
-                                        <circle cx={end.x} cy={end.y} r="5" fill={conn.style?.color || "#13a4ec"} />
+                                        <path d={`M${start.x},${start.y} C${midX},${start.y} ${midX},${end.y} ${end.x},${end.y}`} stroke={isSelected ? 'var(--accent-500)' : (conn.style?.color || "#475569")} strokeWidth={isSelected ? 3 : (conn.style?.width || 2)} fill="none" strokeDasharray={conn.style?.dashed ? "6,4" : "none"} />
+                                        <circle cx={end.x} cy={end.y} r="5" fill={isSelected ? 'var(--accent-500)' : (conn.style?.color || 'var(--accent-500)')} />
                                     </g>
                                 );
                             })}
@@ -725,7 +725,7 @@ const ProjectCanvas = () => {
                             const headerHeight = node.height - totalSectionHeight;
 
                             return (
-                                <div key={node.id} onMouseDown={(e) => handleNodeMouseDown(e, node.id)} onContextMenu={(e) => handleContextMenu(e, node.id)} className={`absolute cursor-move select-none ${isSelected ? "ring-2 ring-[#13a4ec] ring-offset-1 ring-offset-[#101c22]" : ""} ${connectFromId === node.id ? "ring-2 ring-amber-400" : ""}`} style={{ left: node.x, top: node.y, width: node.width, minHeight: node.height }}>
+                                <div key={node.id} onMouseDown={(e) => handleNodeMouseDown(e, node.id)} onContextMenu={(e) => handleContextMenu(e, node.id)} className={`absolute cursor-move select-none ${isSelected ? "ring-2 ring-offset-1 ring-offset-[#101c22]" : ""} ${connectFromId === node.id ? "ring-2 ring-amber-400" : ""}`} style={{ left: node.x, top: node.y, width: node.width, minHeight: node.height, '--tw-ring-color': 'var(--accent-500)' }}>
                                     {/* Şekil arka planı - sadece bölümsüz modda veya dikdörtgen şekillerde */}
                                     {(!node.hasSections || node.shape === "rectangle" || node.shape === "rounded") && (
                                         <svg width={node.width} height={node.height} className="absolute inset-0">{renderShape(node)}</svg>
@@ -769,7 +769,7 @@ const ProjectCanvas = () => {
 
                     {/* Context Menu (Sağ Tık Menüsü) */}
                     {contextMenu && (
-                        <div className="fixed rounded-lg border border-[#283339] bg-[#1a252b] shadow-2xl z-50 py-1 min-w-[160px]" style={{ left: contextMenu.x, top: contextMenu.y }} onClick={(e) => e.stopPropagation()}>
+                        <div className="fixed rounded-lg border shadow-2xl z-50 py-1 min-w-[160px]" style={{ left: contextMenu.x, top: contextMenu.y, backgroundColor: 'var(--panel-bg)', borderColor: 'var(--panel-border)' }} onClick={(e) => e.stopPropagation()}>
                             {contextMenu.type === 'node' ? (
                                 <>
                                     <button onClick={handleCopy} className="w-full text-left px-3 py-1.5 text-xs text-slate-300 hover:bg-[#283339] flex items-center gap-2">

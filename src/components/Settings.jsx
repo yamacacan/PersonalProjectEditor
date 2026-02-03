@@ -58,6 +58,14 @@ const Settings = ({ currentTheme, onThemeChange }) => {
                 preview: ['#0f172a', '#3b0764', '#0f172a']
             }
         },
+        {
+            id: 'pitchblack',
+            name: 'Pitch Black',
+            colors: {
+                bg: 'from-black via-zinc-950 to-black',
+                preview: ['#000000', '#0a0a0a', '#1a1a1a']
+            }
+        },
     ];
 
     const accentColors = [
@@ -89,8 +97,8 @@ const Settings = ({ currentTheme, onThemeChange }) => {
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="text-2xl font-bold text-white mb-2">Settings</h1>
-                    <p className="text-slate-400">Customize your application</p>
+                    <h1 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-main)' }}>Settings</h1>
+                    <p style={{ color: 'var(--text-muted)' }}>Customize your application</p>
                 </div>
 
                 {/* Theme Selection */}
@@ -122,7 +130,7 @@ const Settings = ({ currentTheme, onThemeChange }) => {
                                 <span className="theme-card-name">{theme.name}</span>
                                 {selectedTheme === theme.id && (
                                     <div className="theme-card-check">
-                                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                         </svg>
                                     </div>
@@ -177,17 +185,17 @@ const Settings = ({ currentTheme, onThemeChange }) => {
                     </h2>
 
                     <div className="mt-4 space-y-3">
-                        <div className="flex items-center justify-between py-2 border-b border-slate-700/50">
-                            <span className="text-slate-400">Version</span>
-                            <span className="text-white font-medium">1.0.0</span>
+                        <div className="flex items-center justify-between py-2 border-b" style={{ borderColor: 'var(--panel-border)' }}>
+                            <span style={{ color: 'var(--text-muted)' }}>Version</span>
+                            <span className="font-medium" style={{ color: 'var(--text-main)' }}>1.0.0</span>
                         </div>
-                        <div className="flex items-center justify-between py-2 border-b border-slate-700/50">
-                            <span className="text-slate-400">Developer</span>
-                            <span className="text-white font-medium">yamacacan</span>
+                        <div className="flex items-center justify-between py-2 border-b" style={{ borderColor: 'var(--panel-border)' }}>
+                            <span style={{ color: 'var(--text-muted)' }}>Developer</span>
+                            <span className="font-medium" style={{ color: 'var(--text-main)' }}>yamacacan</span>
                         </div>
                         <div className="flex items-center justify-between py-2">
-                            <span className="text-slate-400">Electron</span>
-                            <span className="text-white font-medium">v28.0.0</span>
+                            <span style={{ color: 'var(--text-muted)' }}>Electron</span>
+                            <span className="font-medium" style={{ color: 'var(--text-main)' }}>v28.0.0</span>
                         </div>
                     </div>
                 </div>

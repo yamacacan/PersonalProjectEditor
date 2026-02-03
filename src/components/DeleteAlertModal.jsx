@@ -51,8 +51,8 @@ const DeleteAlertModal = ({
                         )}
                     </div>
                     <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-white">{title}</h3>
-                        <p className="text-sm text-slate-400 mt-1">{message}</p>
+                        <h3 className="text-lg font-semibold" style={{ color: 'var(--text-main)' }}>{title}</h3>
+                        <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>{message}</p>
                     </div>
                 </div>
 
@@ -60,7 +60,8 @@ const DeleteAlertModal = ({
                 <div className="flex items-center justify-end gap-3 px-6 py-4" style={{ borderTop: '1px solid var(--panel-border)', backgroundColor: 'var(--frame-bg)' }}>
                     <button
                         onClick={onClose}
-                        className="px-4 py-2.5 text-sm font-medium text-slate-300 hover:text-white bg-slate-700/50 hover:bg-slate-700 rounded-xl transition-all"
+                        className="px-4 py-2.5 text-sm font-medium hover:bg-white/10 rounded-xl transition-all"
+                        style={{ color: 'var(--text-muted)' }}
                     >
                         {cancelText}
                     </button>

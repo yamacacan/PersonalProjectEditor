@@ -60,7 +60,7 @@ const AddColumnModal = ({ isOpen, onClose, onAdd }) => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g., In Progress"
-              className="w-full px-4 py-3 border rounded-xl placeholder-slate-400 focus:outline-none focus:border-primary-500 transition-colors"
+              className="w-full px-4 py-3 border rounded-xl placeholder-slate-400 focus:outline-none transition-colors"
               style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--panel-border)', color: 'var(--text-main)' }}
             />
           </div>
@@ -76,7 +76,8 @@ const AddColumnModal = ({ isOpen, onClose, onAdd }) => {
             </button>
             <button
               type="submit"
-              className="flex-1 px-5 py-2.5 bg-primary-500 hover:bg-primary-600 text-white rounded-xl font-medium transition-colors"
+              className="flex-1 px-5 py-2.5 text-white rounded-xl font-medium transition-colors"
+              style={{ backgroundColor: 'var(--accent-500)' }}
             >
               Add Column
             </button>

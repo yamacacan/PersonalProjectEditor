@@ -24,7 +24,7 @@ const CategoryItem = ({ category, level = 0, selectedId, onSelect, onAdd, onDele
       <div
         className={`
           group flex items-center gap-2 px-3 py-2 cursor-pointer transition-colors
-          ${isSelected ? 'bg-primary-500/20 text-primary-400' : 'hover:bg-white/5'}
+          ${isSelected ? 'bg-white/5' : 'hover:bg-white/5'}
         `}
         style={{
           paddingLeft: `${level * 16 + 12}px`,

@@ -567,10 +567,13 @@ const NotesApp = () => {
               <button
                 onClick={() => handleTabChange('notes')}
                 className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-all ${activeTab === 'notes'
-                  ? 'text-primary-400 bg-primary-500/10 border-b-2 border-primary-500'
+                  ? 'bg-white/5 border-b-2'
                   : 'hover:text-white hover:bg-white/5'
                   }`}
-                style={{ color: activeTab === 'notes' ? 'var(--accent-500)' : 'var(--text-muted)' }}
+                style={{
+                  color: activeTab === 'notes' ? 'var(--accent-500)' : 'var(--text-muted)',
+                  borderBottomColor: activeTab === 'notes' ? 'var(--accent-500)' : 'transparent'
+                }}
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -585,10 +588,13 @@ const NotesApp = () => {
               <button
                 onClick={() => handleTabChange('files')}
                 className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-all ${activeTab === 'files'
-                  ? 'text-primary-400 bg-primary-500/10 border-b-2 border-primary-500'
+                  ? 'bg-white/5 border-b-2'
                   : 'hover:text-white hover:bg-white/5'
                   }`}
-                style={{ color: activeTab === 'files' ? 'var(--accent-500)' : 'var(--text-muted)' }}
+                style={{
+                  color: activeTab === 'files' ? 'var(--accent-500)' : 'var(--text-muted)',
+                  borderBottomColor: activeTab === 'files' ? 'var(--accent-500)' : 'transparent'
+                }}
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" />
@@ -620,15 +626,18 @@ const NotesApp = () => {
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
                   className={`m-3 p-4 border-2 border-dashed rounded-xl transition-all ${isDragging
-                    ? 'border-primary-500 bg-primary-500/10'
-                    : 'hover:border-slate-500'
+                    ? 'border-white/50 bg-white/5'
+                    : 'hover:border-white/30'
                     }`}
-                  style={{ backgroundColor: isDragging ? undefined : 'var(--frame-bg)', borderColor: isDragging ? undefined : 'var(--panel-border)' }}
+                  style={{
+                    backgroundColor: isDragging ? undefined : 'var(--frame-bg)',
+                    borderColor: isDragging ? 'var(--accent-500)' : 'var(--panel-border)'
+                  }}
                 >
                   <div className="flex flex-col items-center text-center">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-2 ${isDragging ? 'bg-primary-500/20' : ''}`}
                       style={{ backgroundColor: isDragging ? undefined : 'var(--panel-bg)' }}>
-                      <svg className={`w-5 h-5 ${isDragging ? 'text-primary-400' : ''}`} style={{ color: isDragging ? undefined : 'var(--text-muted)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className={`w-5 h-5`} style={{ color: isDragging ? 'var(--accent-500)' : 'var(--text-muted)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                       </svg>
                     </div>
@@ -637,7 +646,8 @@ const NotesApp = () => {
                     </p>
                     <button
                       onClick={() => fileInputRef.current?.click()}
-                      className="px-3 py-1.5 text-xs bg-primary-500/20 text-primary-400 hover:bg-primary-500/30 rounded-lg transition-all"
+                      className="px-3 py-1.5 text-xs text-white rounded-lg transition-all"
+                      style={{ backgroundColor: 'var(--accent-500)' }}
                     >
                       Select File
                     </button>
@@ -668,7 +678,8 @@ const NotesApp = () => {
                               : 'border-transparent hover:bg-white/5 hover:border-white/10'
                               }`}
                             style={{
-                              backgroundColor: isSelected ? undefined : 'var(--frame-bg)',
+                              backgroundColor: isSelected ? 'color-mix(in srgb, var(--accent-500), transparent 85%)' : 'var(--frame-bg)',
+                              borderColor: isSelected ? 'var(--accent-500)' : 'transparent',
                               color: isSelected ? 'var(--accent-500)' : 'var(--text-main)'
                             }}
                           >
@@ -755,7 +766,8 @@ const NotesApp = () => {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleOpenFile(getSelectedFile())}
-                      className="flex items-center gap-2 px-4 py-2 bg-primary-500/20 text-primary-400 hover:bg-primary-500/30 rounded-xl transition-all"
+                      className="flex items-center gap-2 px-4 py-2 text-white rounded-xl transition-all"
+                      style={{ backgroundColor: 'var(--accent-500)' }}
                     >
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />

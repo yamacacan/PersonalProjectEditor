@@ -122,13 +122,14 @@ const Column = ({
         flex flex-col w-80 flex-shrink-0 rounded-2xl
         backdrop-blur-sm border
         transition-all duration-300 ease-out
-        ${isDragOver ? 'ring-2 ring-primary-500 ring-opacity-50 scale-[1.02]' : ''}
-        ${isColumnDragOver ? 'ring-2 ring-blue-500 ring-opacity-50 scale-[1.02]' : ''}
+        ${isDragOver ? 'ring-2 scale-[1.02]' : ''}
+        ${isColumnDragOver ? 'ring-2 ring-blue-500 scale-[1.02]' : ''}
         ${isReorderMode && onColumnReorder ? 'cursor-move' : ''}
       `}
       style={{
         backgroundColor: isDragOver ? 'var(--frame-bg)' : 'var(--panel-bg)',
-        borderColor: 'var(--panel-border)'
+        borderColor: 'var(--panel-border)',
+        '--tw-ring-color': 'var(--accent-500)'
       }}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
@@ -160,13 +161,13 @@ const Column = ({
                 if (e.key === 'Enter') handleTitleSave();
                 if (e.key === 'Escape') handleTitleCancel();
               }}
-              className="flex-1 min-w-0 px-2 py-1 rounded-lg text-sm font-semibold focus:outline-none focus:border-primary-500"
+              className="flex-1 min-w-0 px-2 py-1 rounded-lg text-sm font-semibold focus:outline-none"
               style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--panel-border)', color: 'var(--text-main)' }}
               autoFocus
             />
           ) : (
             <h2
-              className="font-semibold truncate cursor-pointer hover:text-primary-400 transition-colors"
+              className="font-semibold truncate cursor-pointer transition-colors hover:text-[var(--accent-500)]"
               style={{ color: 'var(--text-main)' }}
               onDoubleClick={handleTitleDoubleClick}
               title="Double-click to edit"
@@ -239,7 +240,7 @@ const Column = ({
                 value={newCardTitle}
                 onChange={(e) => setNewCardTitle(e.target.value)}
                 placeholder="Enter card title..."
-                className="w-full px-3 py-2 border rounded-lg placeholder-slate-400 text-sm focus:outline-none focus:border-primary-500 transition-colors"
+                className="w-full px-3 py-2 border rounded-lg text-sm transition-colors"
                 style={{ backgroundColor: 'var(--panel-bg)', borderColor: 'var(--panel-border)', color: 'var(--text-main)' }}
                 autoFocus
                 onKeyDown={(e) => {
@@ -253,7 +254,10 @@ const Column = ({
               <div className="flex gap-2 mt-3">
                 <button
                   onClick={handleAddCard}
-                  className="flex-1 px-3 py-1.5 bg-primary-500 hover:bg-primary-600 text-white text-sm font-medium rounded-lg transition-colors"
+                  className="flex-1 px-3 py-1.5 text-white text-sm font-medium rounded-lg transition-colors"
+                  style={{ backgroundColor: 'var(--accent-500)' }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-600)'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-500)'}
                 >
                   Add
                 </button>

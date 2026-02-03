@@ -254,7 +254,10 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete, availableTag
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white text-sm font-medium rounded-lg transition-colors"
+                    className="px-4 py-2 text-white text-sm font-medium rounded-lg transition-colors"
+                    style={{ backgroundColor: 'var(--accent-500)' }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-600)'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-500)'}
                   >
                     Change
                   </button>
@@ -299,7 +302,7 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete, availableTag
                 value={formData.cardId}
                 onChange={(e) => setFormData({ ...formData, cardId: e.target.value })}
                 placeholder="TASK-123"
-                className="w-full px-4 py-2.5 border rounded-xl placeholder-slate-400 focus:outline-none focus:border-primary-500 transition-colors"
+                className="w-full px-4 py-2.5 border rounded-xl placeholder-slate-400 focus:outline-none transition-colors"
                 style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--panel-border)', color: 'var(--text-main)' }}
               />
             </div>
@@ -310,7 +313,7 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete, availableTag
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="Card title"
-                className="w-full px-4 py-2.5 border rounded-xl placeholder-slate-400 focus:outline-none focus:border-primary-500 transition-colors"
+                className="w-full px-4 py-2.5 border rounded-xl placeholder-slate-400 focus:outline-none transition-colors"
                 style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--panel-border)', color: 'var(--text-main)' }}
               />
             </div>
@@ -324,7 +327,7 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete, availableTag
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Write detailed description..."
               rows="3"
-              className="w-full px-4 py-2.5 border rounded-xl placeholder-slate-400 resize-none focus:outline-none focus:border-primary-500 transition-colors"
+              className="w-full px-4 py-2.5 border rounded-xl placeholder-slate-400 resize-none focus:outline-none transition-colors"
               style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--panel-border)', color: 'var(--text-main)' }}
             />
           </div>
@@ -370,7 +373,7 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete, availableTag
                   onFocus={() => setShowSuggestions(true)}
                   onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                   placeholder="New tag..."
-                  className="w-full px-4 py-2 border rounded-lg placeholder-slate-400 text-sm focus:outline-none focus:border-primary-500 transition-colors"
+                  className="w-full px-4 py-2 border rounded-lg placeholder-slate-400 text-sm focus:outline-none transition-colors"
                   style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--panel-border)', color: 'var(--text-main)' }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
@@ -422,7 +425,8 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete, availableTag
               <button
                 type="button"
                 onClick={() => handleAddTag()}
-                className="px-3 py-2 bg-primary-500 hover:bg-primary-600 text-white text-sm font-medium rounded-lg transition-colors"
+                className="px-3 py-2 text-white text-sm font-medium rounded-lg transition-colors"
+                style={{ backgroundColor: 'var(--accent-500)' }}
               >
                 Add
               </button>
@@ -496,10 +500,13 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete, availableTag
                       type="button"
                       onClick={() => handleToggleTodo(todo.id)}
                       className={`flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${todo.completed
-                        ? 'bg-primary-500 border-primary-500'
-                        : 'border-transparent hover:border-primary-500'
+                        ? 'border-transparent'
+                        : 'border-transparent'
                         }`}
-                      style={{ borderColor: todo.completed ? undefined : 'var(--panel-border)' }}
+                      style={{
+                        backgroundColor: todo.completed ? 'var(--accent-500)' : 'transparent',
+                        borderColor: todo.completed ? 'var(--accent-500)' : 'var(--panel-border)'
+                      }}
                     >
                       {todo.completed && (
                         <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -549,7 +556,8 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete, availableTag
               <button
                 type="button"
                 onClick={handleAddTodo}
-                className="px-4 py-2.5 bg-primary-500 hover:bg-primary-600 text-white text-sm font-medium rounded-xl transition-colors flex items-center gap-2"
+                className="px-4 py-2.5 text-white text-sm font-medium rounded-xl transition-colors flex items-center gap-2"
+                style={{ backgroundColor: 'var(--accent-500)' }}
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -569,8 +577,9 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete, availableTag
                 </div>
                 <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--frame-bg)' }}>
                   <div
-                    className="h-full bg-gradient-to-r from-primary-500 to-primary-400 transition-all duration-300"
+                    className="h-full transition-all duration-300"
                     style={{
+                      backgroundColor: 'var(--accent-500)',
                       width: `${(formData.todos.filter((t) => t.completed).length / formData.todos.length) * 100
                         }%`,
                     }}
@@ -605,7 +614,10 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete, availableTag
             <button
               type="button"
               onClick={handleSave}
-              className="px-5 py-2.5 bg-primary-500 hover:bg-primary-600 text-white rounded-xl font-medium transition-colors"
+              className="px-5 py-2.5 text-white rounded-xl font-medium transition-colors"
+              style={{ backgroundColor: 'var(--accent-500)' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-600)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-500)'}
             >
               Save
             </button>

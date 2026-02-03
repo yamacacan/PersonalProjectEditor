@@ -15,6 +15,7 @@ const themes = {
   forest: 'from-slate-900 via-emerald-950 to-slate-900',
   sunset: 'from-slate-900 via-rose-950 to-slate-900',
   purple: 'from-slate-900 via-purple-950 to-slate-900',
+  pitchblack: 'from-black via-zinc-950 to-black',
 };
 
 function App() {
@@ -114,6 +115,16 @@ function App() {
         canvasDot: '#7e22ce',
         textMain: '#ffffff',
         textMuted: '#94a3b8'
+      },
+      pitchblack: {
+        bg: 'rgba(0, 0, 0, 0.95)',
+        border: 'rgba(38, 38, 38, 0.5)',
+        panel: 'rgba(10, 10, 10, 0.95)',
+        panelBorder: 'rgba(38, 38, 38, 0.5)',
+        canvasBg: '#000000',
+        canvasDot: '#262626',
+        textMain: '#ffffff',
+        textMuted: '#a3a3a3'
       },
     };
 

@@ -69,10 +69,13 @@ const AddCategoryModal = ({ isOpen, onClose, onAdd, parentName = null }) => {
                   className={`
                     w-10 h-10 text-2xl rounded-lg transition-all
                     ${icon === ic
-                      ? 'bg-primary-500 ring-2 ring-primary-400 ring-offset-2 ring-offset-slate-800 scale-110'
-                      : 'bg-slate-700/50 hover:bg-slate-700 hover:scale-105'
+                      ? 'ring-2 ring-primary-400 ring-offset-2 ring-offset-slate-800 scale-110'
+                      : 'hover:bg-white/10 hover:scale-105'
                     }
                   `}
+                  style={{
+                    backgroundColor: icon === ic ? 'var(--accent-500)' : 'var(--frame-bg)'
+                  }}
                 >
                   {ic}
                 </button>
@@ -88,7 +91,7 @@ const AddCategoryModal = ({ isOpen, onClose, onAdd, parentName = null }) => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter category name..."
-              className="w-full px-4 py-2.5 border rounded-xl placeholder-slate-400 focus:outline-none focus:border-primary-500 transition-colors"
+              className="w-full px-4 py-2.5 border rounded-xl placeholder-slate-400 focus:outline-none transition-colors"
               style={{ backgroundColor: 'var(--frame-bg)', borderColor: 'var(--panel-border)', color: 'var(--text-main)' }}
               autoFocus
             />
@@ -106,7 +109,8 @@ const AddCategoryModal = ({ isOpen, onClose, onAdd, parentName = null }) => {
             <button
               type="submit"
               disabled={!name.trim()}
-              className="flex-1 px-4 py-2.5 bg-primary-500 hover:bg-primary-600 disabled:bg-slate-700 disabled:text-slate-500 disabled:cursor-not-allowed text-white rounded-xl font-medium transition-colors"
+              className="flex-1 px-4 py-2.5 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-medium transition-colors"
+              style={{ backgroundColor: name.trim() ? 'var(--accent-500)' : 'var(--panel-border)' }}
             >
               Add
             </button>

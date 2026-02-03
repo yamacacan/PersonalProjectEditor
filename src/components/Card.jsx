@@ -38,7 +38,11 @@ const Card = ({ card, onViewDetail, onDragStart, onDragEnd }) => {
 
   return (
     <div
-      className="group bg-slate-700/50 hover:bg-slate-700/70 rounded-xl cursor-pointer border border-slate-600/30 hover:border-slate-500/50 transition-all duration-200 hover:shadow-lg hover:shadow-black/20 hover:-translate-y-0.5 animate-fade-in overflow-hidden"
+      className="group rounded-xl cursor-pointer border transition-all duration-200 hover:shadow-lg hover:shadow-black/20 hover:-translate-y-0.5 animate-fade-in overflow-hidden"
+      style={{
+        backgroundColor: 'var(--panel-bg)',
+        borderColor: 'var(--panel-border)'
+      }}
       draggable
       onDragStart={(e) => {
         e.dataTransfer.setData('cardId', card.id);
@@ -89,7 +93,7 @@ const Card = ({ card, onViewDetail, onDragStart, onDragEnd }) => {
 
         {/* Description */}
         {card.description && (
-          <p className="text-xs text-slate-400 leading-relaxed mb-3 line-clamp-2">
+          <p className="text-xs leading-relaxed mb-3 line-clamp-2" style={{ color: 'var(--text-muted)' }}>
             {card.description}
           </p>
         )}
@@ -105,10 +109,11 @@ const Card = ({ card, onViewDetail, onDragStart, onDragEnd }) => {
                 {card.todos.filter((t) => t.completed).length}/{card.todos.length}
               </span>
             </div>
-            <div className="h-1.5 bg-slate-600/50 rounded-full overflow-hidden">
+            <div className="h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: 'color-mix(in srgb, var(--text-muted), transparent 80%)' }}>
               <div
-                className="h-full bg-gradient-to-r from-primary-500 to-primary-400 transition-all duration-300"
+                className="h-full transition-all duration-300"
                 style={{
+                  backgroundColor: 'var(--accent-500)',
                   width: `${card.todos.length > 0
                     ? (card.todos.filter((t) => t.completed).length / card.todos.length) * 100
                     : 0
@@ -124,8 +129,8 @@ const Card = ({ card, onViewDetail, onDragStart, onDragEnd }) => {
           <div className="flex items-center gap-3">
             {/* Card ID */}
             {card.cardId && (
-              <span className="flex items-center gap-1.5 text-[11px] text-slate-400 font-mono">
-                <svg className="w-3.5 h-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+              <span className="flex items-center gap-1.5 text-[11px] font-mono" style={{ color: 'var(--text-muted)' }}>
+                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" style={{ color: 'var(--accent-500)' }}>
                   <circle cx="10" cy="10" r="4" />
                 </svg>
                 {card.cardId}
@@ -156,7 +161,8 @@ const Card = ({ card, onViewDetail, onDragStart, onDragEnd }) => {
           {/* Assignee */}
           {card.assignedTo && (
             <div
-              className="w-7 h-7 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-[10px] font-semibold text-white shadow-md"
+              className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold text-white shadow-md"
+              style={{ background: 'linear-gradient(to bottom right, var(--accent-500), var(--accent-600))' }}
               title={card.assignedTo}
             >
               {getInitials(card.assignedTo)}

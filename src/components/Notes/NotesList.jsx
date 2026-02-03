@@ -83,7 +83,8 @@ const NotesList = ({ categoryId, notes, selectedNoteId, onSelect, onAdd, onDelet
               <p className="text-sm text-center mb-3">No notes in this category yet</p>
               <button
                 onClick={onAdd}
-                className="text-sm text-primary-400 hover:text-primary-300 font-medium"
+                className="text-sm font-medium hover:opacity-80"
+                style={{ color: 'var(--accent-500)' }}
               >
                 Create first note
               </button>
@@ -97,11 +98,14 @@ const NotesList = ({ categoryId, notes, selectedNoteId, onSelect, onAdd, onDelet
                   className={`
                     group relative p-3 rounded-lg cursor-pointer transition-all border
                     ${selectedNoteId === note.id
-                      ? 'bg-primary-500/20 border-primary-500/30'
+                      ? 'border-transparent'
                       : 'border-transparent hover:bg-white/5 hover:border-white/10'
                     }
                   `}
-                  style={{ backgroundColor: selectedNoteId === note.id ? undefined : 'var(--frame-bg)' }}
+                  style={{
+                    backgroundColor: selectedNoteId === note.id ? 'color-mix(in srgb, var(--accent-500), transparent 85%)' : 'var(--frame-bg)',
+                    borderColor: selectedNoteId === note.id ? 'var(--accent-500)' : 'transparent'
+                  }}
                 >
                   <div className="flex items-start justify-between mb-2">
                     <h4

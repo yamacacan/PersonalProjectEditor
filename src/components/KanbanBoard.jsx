@@ -470,10 +470,10 @@ function KanbanBoard() {
 
   if (isLoading) {
     return (
-      <div className="h-full w-full flex items-center justify-center">
+      <div className="h-full w-full flex items-center justify-center" style={{ backgroundColor: 'var(--canvas-bg)' }}>
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
-          <span className="text-slate-400 font-medium">Loading...</span>
+          <div className="w-12 h-12 border-4 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'var(--accent-500)', borderTopColor: 'transparent' }}></div>
+          <span className="font-medium" style={{ color: 'var(--text-muted)' }}>Loading...</span>
         </div>
       </div>
     );
@@ -523,8 +523,8 @@ function KanbanBoard() {
                   className="flex items-center gap-2 px-3 py-2 rounded-xl backdrop-blur-sm border transition-all group"
                   style={{ backgroundColor: 'var(--panel-bg)', borderColor: 'var(--panel-border)' }}
                 >
-                  <div className="w-8 h-8 rounded-lg bg-primary-500/10 flex items-center justify-center">
-                    <svg className="w-5 h-5 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'color-mix(in srgb, var(--accent-500), transparent 90%)' }}>
+                    <svg className="w-5 h-5" style={{ color: 'var(--accent-500)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                     </svg>
                   </div>
@@ -540,7 +540,7 @@ function KanbanBoard() {
                       onClick={(e) => e.stopPropagation()}
                     />
                   ) : (
-                    <span className="text-lg font-bold group-hover:text-primary-400 transition-colors" style={{ color: 'var(--text-main)' }}>
+                    <span className="text-lg font-bold transition-colors hover:opacity-80" style={{ color: 'var(--text-main)' }}>
                       {currentBoard.title}
                     </span>
                   )}
@@ -573,11 +573,11 @@ function KanbanBoard() {
                               setIsBoardDropdownOpen(false);
                               setIsCreatingBoard(false);
                             }}
-                            className={`w-full text-left px-3 py-2.5 rounded-xl hover:bg-white/5 transition-all flex items-center justify-between group ${activeBoardId === board.id ? 'bg-primary-500/10 text-primary-400' : ''}`}
+                            className={`w-full text-left px-3 py-2.5 rounded-xl hover:bg-white/5 transition-all flex items-center justify-between group ${activeBoardId === board.id ? 'bg-white/5' : ''}`}
                             style={{ color: activeBoardId === board.id ? 'var(--accent-500)' : 'var(--text-main)' }}
                           >
                             <span className="font-medium truncate">{board.title}</span>
-                            {activeBoardId === board.id && <div className="w-1.5 h-1.5 rounded-full bg-primary-400 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>}
+                            {activeBoardId === board.id && <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: 'var(--accent-500)', boxShadow: '0 0 8px var(--accent-500)' }}></div>}
                           </button>
                         ))}
                       </div>
@@ -598,11 +598,11 @@ function KanbanBoard() {
                             />
                             <div className="flex gap-2 justify-end">
                               <button onClick={() => { setIsCreatingBoard(false); setCreateBoardName(''); }} className="px-3 py-1.5 text-xs hover:text-white transition-colors" style={{ color: 'var(--text-muted)' }}>Cancel</button>
-                              <button onClick={handleCreateBoard} disabled={!createBoardName.trim()} className="px-3 py-1.5 bg-primary-500 hover:bg-primary-600 disabled:opacity-50 text-white text-xs font-bold rounded-lg transition-all">Create</button>
+                              <button onClick={handleCreateBoard} disabled={!createBoardName.trim()} className="px-3 py-1.5 disabled:opacity-50 text-white text-xs font-bold rounded-lg transition-all" style={{ backgroundColor: 'var(--accent-500)' }}>Create</button>
                             </div>
                           </div>
                         ) : (
-                          <button onClick={() => setIsCreatingBoard(true)} className="w-full flex items-center gap-2 px-3 py-2 text-sm text-primary-400 hover:bg-primary-500/10 rounded-xl transition-all font-medium">
+                          <button onClick={() => setIsCreatingBoard(true)} className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-white/5 rounded-xl transition-all font-medium" style={{ color: 'var(--accent-500)' }}>
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                             Create New Board
                           </button>
@@ -642,7 +642,7 @@ function KanbanBoard() {
             <div className="flex-1 max-w-lg hidden lg:block">
               <div className="relative group/search">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                  <svg className="w-4 h-4 text-slate-500 group-focus-within/search:text-primary-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-4 h-4 text-slate-500 transition-colors group-focus-within/search:text-[var(--accent-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </div>
@@ -651,7 +651,7 @@ function KanbanBoard() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search across all cards..."
-                  className="w-full pl-10 pr-4 py-2.5 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500/30 focus:bg-white/10 transition-all text-sm backdrop-blur-sm"
+                  className="w-full pl-10 pr-4 py-2.5 border rounded-2xl focus:outline-none transition-all text-sm backdrop-blur-sm"
                   style={{ backgroundColor: 'var(--panel-bg)', borderColor: 'var(--panel-border)', color: 'var(--text-main)' }}
                 />
               </div>
@@ -696,12 +696,12 @@ function KanbanBoard() {
               <button
                 onClick={() => setIsReorderMode(!isReorderMode)}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all text-sm border ${isReorderMode
-                  ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20'
+                  ? 'text-white shadow-lg'
                   : 'hover:bg-white/5'
                   }`}
                 style={{
-                  backgroundColor: isReorderMode ? undefined : 'var(--panel-bg)',
-                  borderColor: isReorderMode ? undefined : 'var(--panel-border)',
+                  backgroundColor: isReorderMode ? 'var(--accent-500)' : 'var(--panel-bg)',
+                  borderColor: isReorderMode ? 'var(--accent-500)' : 'var(--panel-border)',
                   color: isReorderMode ? undefined : 'var(--text-main)'
                 }}
               >
@@ -724,7 +724,8 @@ function KanbanBoard() {
 
               <button
                 onClick={() => setIsAddColumnModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-br from-primary-500 to-primary-600 hover:from-primary-400 hover:to-primary-500 text-white rounded-xl font-bold text-sm transition-all shadow-lg shadow-primary-500/25 hover:shadow-primary-500/40 border border-white/10 active:scale-95"
+                className="flex items-center gap-2 px-4 py-2.5 text-white rounded-xl font-bold text-sm transition-all shadow-lg border border-white/10 active:scale-95"
+                style={{ backgroundColor: 'var(--accent-500)' }}
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
