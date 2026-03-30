@@ -50,6 +50,51 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete, availableTag
   });
   const fileInputRef = useRef(null);
 
+  // Check if form data has changed compared to original card
+  const hasUnsavedChanges = () => {
+    if (!card) return false;
+    const original = {
+      title: card.title || '',
+      description: card.description || '',
+      tags: card.tags || [],
+      assignedTo: card.assignedTo || '',
+      priority: card.priority || 'medium',
+      dueDate: card.dueDate || '',
+      cardId: card.cardId || card.id || '',
+      image: card.image || null,
+      todos: card.todos || [],
+    };
+
+    if (formData.title !== original.title) return true;
+    if (formData.description !== original.description) return true;
+    if (formData.assignedTo !== original.assignedTo) return true;
+    if (formData.priority !== original.priority) return true;
+    if (formData.dueDate !== original.dueDate) return true;
+    if (formData.cardId !== original.cardId) return true;
+    if (imageChanged) return true;
+    if (JSON.stringify(formData.tags) !== JSON.stringify(original.tags)) return true;
+    if (JSON.stringify(formData.todos) !== JSON.stringify(original.todos)) return true;
+
+    return false;
+  };
+
+  // Attempt to close – show alert if there are unsaved changes
+  const handleCloseAttempt = () => {
+    if (hasUnsavedChanges()) {
+      setDeleteModal({
+        isOpen: true,
+        title: 'Unsaved Changes',
+        message: 'You have unsaved changes. Are you sure you want to close without saving?',
+        onConfirm: () => {
+          setDeleteModal({ isOpen: false });
+          onClose();
+        }
+      });
+    } else {
+      onClose();
+    }
+  };
+
   useEffect(() => {
     if (card) {
       setFormData({
@@ -144,7 +189,7 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete, availableTag
 
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) {
-      onClose();
+      handleCloseAttempt();
     }
   };
 
@@ -218,7 +263,7 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete, availableTag
           <h2 className="text-lg font-semibold" style={{ color: 'var(--text-main)' }}>Card Details</h2>
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleCloseAttempt}
             className="p-2 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
             style={{ color: 'var(--text-muted)' }}
           >
@@ -605,7 +650,7 @@ const CardDetailModal = ({ card, isOpen, onClose, onSave, onDelete, availableTag
           <div className="flex gap-3">
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleCloseAttempt}
               className="px-5 py-2.5 hover:text-white hover:bg-white/10 rounded-xl font-medium transition-colors"
               style={{ color: 'var(--text-muted)' }}
             >

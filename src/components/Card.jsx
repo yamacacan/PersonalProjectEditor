@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { loadImage } from '../utils/storage';
-
+import SavingCard from './SavingCard';
 const PRIORITY_CONFIG = {
   low: { color: 'bg-slate-500', label: 'Low' },
   medium: { color: 'bg-amber-500', label: 'Medium' },

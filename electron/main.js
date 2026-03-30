@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, nativeImage, Menu, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeImage, Menu, shell, Notification } from 'electron';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { readFile, writeFile, mkdir, unlink } from 'fs/promises';
@@ -10,6 +10,8 @@ const __dirname = dirname(__filename);
 
 const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
 
+// Due date notification tracking (avoid duplicate notifications per day)
+const sentNotifications = new Set();
 // App name
 app.setName('Kanban Board');
 
@@ -192,6 +194,95 @@ function createWindow() {
   });
 }
 
+// ---- Due Date Notification System ----
+
+function getDayKey(date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+function showDueDateNotification(card, boardTitle, dayLabel) {
+  const notifKey = `${getDayKey(new Date())}_${card.id}`;
+  if (sentNotifications.has(notifKey)) return;
+
+  const iconPath = getIconPath();
+  const notif = new Notification({
+    title: `📋 ${dayLabel}`,
+    body: `"${card.title}" - ${boardTitle}`,
+    icon: existsSync(iconPath) ? iconPath : undefined,
+    silent: false,
+  });
+
+  notif.on('click', () => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
+    }
+  });
+
+  notif.show();
+  sentNotifications.add(notifKey);
+}
+
+async function checkDueDateNotifications() {
+  try {
+    const data = await loadData();
+    if (!data || !data.boards) return;
+
+    const now = new Date();
+    const today = getDayKey(now);
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowKey = getDayKey(tomorrow);
+
+    // "done" sütunlarını atlamak için yaygın isimler
+    const doneColumnIds = ['done', 'completed', 'finished', 'tamamlandı', 'bitti'];
+
+    for (const board of Object.values(data.boards)) {
+      if (!board.columns) continue;
+
+      for (const [columnId, cards] of Object.entries(board.columns)) {
+        // Done sütunlarındaki kartları atla
+        const colTitle = (board.columnTitles?.[columnId] || columnId).toLowerCase();
+        if (doneColumnIds.some(d => colTitle.includes(d) || columnId.toLowerCase().includes(d))) {
+          continue;
+        }
+
+        for (const card of cards) {
+          if (!card.dueDate) continue;
+
+          const dueDateKey = getDayKey(new Date(card.dueDate));
+
+          if (dueDateKey === today) {
+            showDueDateNotification(card, board.title, '⚠️ Bugün son gün!');
+          } else if (dueDateKey === tomorrowKey) {
+            showDueDateNotification(card, board.title, '🔔 Yarın son gün');
+          } else {
+            // Geçmiş tarihleri kontrol et (overdue)
+            const dueDate = new Date(card.dueDate);
+            dueDate.setHours(23, 59, 59, 999);
+            if (dueDate < now) {
+              showDueDateNotification(card, board.title, '🚨 Süresi geçti!');
+            }
+          }
+        }
+      }
+    }
+
+    // Günlük temizlik: eski notification key'lerini temizle
+    const todayPrefix = getDayKey(now) + '_';
+    for (const key of sentNotifications) {
+      if (!key.startsWith(todayPrefix)) {
+        sentNotifications.delete(key);
+      }
+    }
+  } catch (error) {
+    console.error('Error checking due date notifications:', error);
+  }
+}
+
+// Bildirim kontrol intervali (5 dakikada bir)
+let notificationInterval = null;
+
 app.whenReady().then(() => {
   // Menüyü kaldır (sadece production'da)
   if (!isDev) {
@@ -199,6 +290,16 @@ app.whenReady().then(() => {
   }
 
   createWindow();
+
+  // İlk bildirim kontrolü (5 saniye gecikmeyle başlat)
+  setTimeout(() => {
+    checkDueDateNotifications();
+  }, 5000);
+
+  // Her 5 dakikada bir kontrol et
+  notificationInterval = setInterval(() => {
+    checkDueDateNotifications();
+  }, 5 * 60 * 1000);
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -208,6 +309,9 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
+  if (notificationInterval) {
+    clearInterval(notificationInterval);
+  }
   if (process.platform !== 'darwin') {
     app.quit();
   }

@@ -5,7 +5,7 @@ import AddColumnModal from './AddColumnModal';
 import DeleteAlertModal from './DeleteAlertModal';
 import Trashhold from './Trashhold';
 import { loadKanbanData, saveKanbanData, deleteImage } from '../utils/storage';
-
+import SavingCard from './SavingCard';
 function KanbanBoard() {
   const [boards, setBoards] = useState({});
   const [activeBoardId, setActiveBoardId] = useState(null);
