@@ -1,0 +1,97 @@
+name: 📝 PR Quality Check
+
+on:
+  pull_request:
+    branches: ["main"]
+    types: [opened, synchronize, reopened, edited]
+
+jobs:
+  pr-quality:
+    name: 📝 PR Quality
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📊 PR Size Check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+            });
+
+            const changes = files.reduce((sum, file) => sum + file.changes, 0);
+            const fileCount = files.length;
+
+            let sizeLabel = '';
+            let sizeEmoji = '';
+
+            if (changes < 50) {
+              sizeLabel = 'size/S';
+              sizeEmoji = '🟢';
+            } else if (changes < 200) {
+              sizeLabel = 'size/M';
+              sizeEmoji = '🟡';
+            } else if (changes < 500) {
+              sizeLabel = 'size/L';
+              sizeEmoji = '🟠';
+            } else {
+              sizeLabel = 'size/XL';
+              sizeEmoji = '🔴';
+            }
+
+            // Create or update comment
+            const body = `## ${sizeEmoji} PR Size Analysis
+
+            | Metric | Value |
+            |--------|-------|
+            | Changed files | **${fileCount}** |
+            | Total changes | **${changes}** lines |
+            | Size label | **${sizeLabel}** |
+
+            ${changes > 500 ? '> ⚠️ **This PR is too big!** Consider splitting it into smaller PRs.' : '✅ PR size is appropriate.'}`;
+
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.data.find(c =>
+              c.body.includes('PR Size Analysis')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
+
+            // Add size label
+            try {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                labels: [sizeLabel],
+              });
+            } catch (e) {
+              core.warning(`Label couldn't be added: ${e.message}`);
+            }

@@ -1,0 +1,147 @@
+name: 🚀 Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+env:
+  NODE_VERSION: "20"
+
+jobs:
+ #Release process
+  validate:
+    name: ✅ Pre-release Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: 📥 Install dependencies
+        run: npm ci
+
+      - name: 🧹 Lint
+        run: npm run lint
+
+      - name: 🏗️ Build
+        run: npm run build
+
+  #Electron build process
+  build-electron:
+    name: 📦 Build ${{ matrix.os-name }}
+    needs: validate
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            os-name: Windows
+            build-cmd: npm run electron:build:win
+          - os: ubuntu-latest
+            os-name: Linux
+            build-cmd: npm run electron:build:linux
+          - os: macos-latest
+            os-name: macOS
+            build-cmd: npm run electron:build:mac
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: 📥 Install dependencies
+        run: npm ci
+
+      - name: 🏗️ Build Electron App (${{ matrix.os-name }})
+        run: ${{ matrix.build-cmd }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📤 Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ matrix.os-name }}
+          path: |
+            release/*.exe
+            release/*.dmg
+            release/*.zip
+            release/*.AppImage
+            release/*.deb
+            release/*.rpm
+            release/*.snap
+          retention-days: 30
+
+  #GitHub release process
+  create-release:
+    name: 🎉 Create GitHub Release
+    needs: build-electron
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📥 Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+          pattern: release-*
+          merge-multiple: true
+
+      - name: 📋 Generate changelog
+        id: changelog
+        run: |
+          PREV_TAG=$(git tag --sort=-creatordate | head -2 | tail -1)
+          CURRENT_TAG=${{ github.ref_name }}
+
+          if [ -z "$PREV_TAG" ] || [ "$PREV_TAG" = "$CURRENT_TAG" ]; then
+            CHANGELOG="🎉 First release!"
+          else
+            CHANGELOG=$(git log ${PREV_TAG}..${CURRENT_TAG} --pretty=format:"- %s (%h)" --no-merges)
+          fi
+
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: 🎉 Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "🚀 Kanban Board ${{ github.ref_name }}"
+          body: |
+            ## 📋 Changes
+
+            ${{ steps.changelog.outputs.changelog }}
+
+            ## 📦 Downloads
+
+            | Platform | Dosya |
+            |----------|-------|
+            | 🪟 Windows | `.exe` download exe |
+            | 🍎 macOS | `.zip` download zip |
+            | 🐧 Linux | `.AppImage` download appimage |
+
+            ---
+            > This release was automatically created by the CI/CD pipeline.
+          files: artifacts/**/*
+          draft: false
+          prerelease: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

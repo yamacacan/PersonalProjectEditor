@@ -535,13 +535,15 @@ const ProjectCanvas = () => {
                 return <ellipse cx={width / 2} cy={height / 2} rx={width / 2 - s.strokeWidth} ry={height / 2 - s.strokeWidth} {...commonStyle} />;
             case "diamond":
                 return <polygon points={`${width / 2},${s.strokeWidth} ${width - s.strokeWidth},${height / 2} ${width / 2},${height - s.strokeWidth} ${s.strokeWidth},${height / 2}`} {...commonStyle} />;
-            case "hexagon":
+            case "hexagon": {
                 const hw = width / 4;
                 return <polygon points={`${hw},0 ${width - hw},0 ${width},${height / 2} ${width - hw},${height} ${hw},${height} 0,${height / 2}`} {...commonStyle} />;
-            case "parallelogram":
+            }
+            case "parallelogram": {
                 const offset = width * 0.2;
                 return <polygon points={`${offset},0 ${width},0 ${width - offset},${height} 0,${height}`} {...commonStyle} />;
-            case "cylinder":
+            }
+            case "cylinder": {
                 const ry = height * 0.1;
                 return (
                     <g {...commonStyle}>
@@ -550,6 +552,7 @@ const ProjectCanvas = () => {
                         <ellipse cx={width / 2} cy={height - ry} rx={width / 2 - s.strokeWidth} ry={ry} />
                     </g>
                 );
+            }
             case "rounded":
                 return <rect x={s.strokeWidth / 2} y={s.strokeWidth / 2} width={width - s.strokeWidth} height={height - s.strokeWidth} rx={s.cornerRadius} {...commonStyle} />;
             default: // rectangle

@@ -144,7 +144,7 @@ npm run electron:build:linux
 
 ```
 PersonalProjectEditor/
-├── 📁 build/               # Build resources and icons
+├── 📁 build/               # Build resources and icons if you want to change them
 ├── 📁 electron/
 │   ├── main.js            # Electron main process
 │   └── preload.js         # IPC bridge
